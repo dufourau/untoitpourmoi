@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Admin · Un toit pour moi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --night: #1c1b19; --stone: #373733; --ash: #928e84; --mist: #a7a59c; --bone: #d5d1c8;
+    --ember: #c98a5e; --ember-hi: #dfa071; --ok: #7fae8a; --bad: #d9776a;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; background: var(--night); color: var(--bone);
+         font: 15px/1.55 "Karla", system-ui, sans-serif; }
+  h1 { font-family: "Cormorant Garamond", serif; font-weight: 600; font-size: 2rem; margin: 0; }
+  button, input { font: inherit; }
+  .btn { background: var(--ember); color: var(--night); border: 0; border-radius: 999px; padding: 11px 22px;
+         font-weight: 700; cursor: pointer; transition: background .2s; }
+  .btn:hover { background: var(--ember-hi); }
+  .btn:disabled { opacity: .4; cursor: default; }
+  .muted { color: var(--ash); }
+  .hidden { display: none !important; }
+
+  /* Login */
+  .login { min-height: 100vh; display: grid; place-items: center; padding: 16px; }
+  .login form { background: var(--stone); padding: 32px; border-radius: 16px; width: min(380px, 100%);
+                box-shadow: 0 30px 80px rgba(0,0,0,.5); display: grid; gap: 14px; }
+  .login input { padding: 12px 14px; border-radius: 10px; border: 1px solid #4a4a45; background: var(--night);
+                 color: var(--bone); }
+  .err { color: var(--bad); min-height: 1.4em; margin: 0; font-size: .92rem; }
+
+  /* Editor */
+  .top { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+         padding: 14px clamp(16px, 4vw, 40px); background: rgba(28,27,25,.94); backdrop-filter: blur(8px);
+         border-bottom: 1px solid var(--stone); }
+  .top h1 { font-size: 1.5rem; margin-right: auto; }
+  .status { font-size: .9rem; }
+  .status.ok { color: var(--ok); } .status.bad { color: var(--bad); }
+  main { padding: 24px clamp(16px, 4vw, 40px) 60px; max-width: 1200px; margin: 0 auto; }
+
+  .drop { border: 2px dashed #55554f; border-radius: 16px; padding: 38px 20px; text-align: center; cursor: pointer;
+          background: rgba(55,55,51,.35); transition: all .2s; }
+  .drop strong { display: block; font-size: 1.15rem; color: var(--bone); margin-bottom: 4px; }
+  .drop.over { border-color: var(--ember); background: rgba(201,138,94,.12); }
+  .hint { font-size: .88rem; margin: 10px 0 26px; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+  .card { background: var(--stone); border-radius: 12px; overflow: hidden; position: relative;
+          border: 2px solid transparent; }
+  .card.new { border-color: var(--ember); }
+  .card.dragging { opacity: .4; }
+  .card.target { border-color: var(--bone); }
+  .card .img { aspect-ratio: 4 / 3; background: #262623 center/cover no-repeat; cursor: grab; }
+  .card .tag { position: absolute; top: 8px; left: 8px; background: var(--ember); color: var(--night);
+               font-size: .72rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+  .card .first { position: absolute; top: 8px; left: 8px; background: var(--bone); color: var(--night);
+                 font-size: .72rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+  .card .row { display: flex; gap: 6px; padding: 8px; align-items: center; }
+  .card input { flex: 1; min-width: 0; padding: 7px 9px; border-radius: 8px; border: 1px solid #4a4a45;
+                background: var(--night); color: var(--bone); font-size: .88rem; }
+  .icon { background: #262623; border: 0; color: var(--mist); width: 32px; height: 32px; border-radius: 8px;
+          cursor: pointer; flex: 0 0 auto; }
+  .icon:hover { color: var(--bone); background: #1f1f1d; }
+  .icon.del:hover { color: var(--bad); }
+  .empty { text-align: center; padding: 30px; }
+</style>
+</head>
+<body>
+
+<section class="login" id="login">
+  <form id="login-form">
+    <h1>Un toit pour moi</h1>
+    <p class="muted" style="margin:0">Espace admin de la galerie</p>
+    <input type="password" id="password" placeholder="Mot de passe" autocomplete="current-password" required autofocus>
+    <button class="btn" type="submit">Entrer</button>
+    <p class="err" id="login-err"></p>
+  </form>
+</section>
+
+<section id="editor" class="hidden">
+  <div class="top">
+    <h1>Galerie</h1>
+    <span class="status" id="status"></span>
+    <a href="../" target="_blank" class="muted">Voir le site ↗</a>
+    <button class="btn" id="publish" disabled>Publier</button>
+  </div>
+  <main>
+    <label class="drop" id="drop">
+      <strong>Glissez vos photos ici</strong>
+      <span class="muted">ou cliquez pour les choisir</span>
+      <input type="file" id="file" accept="image/*" multiple hidden>
+    </label>
+    <p class="hint muted">Les photos sont réduites automatiquement. Faites glisser les vignettes pour changer l'ordre :
+      la première sert de fond à la page d'accueil. Rien n'est en ligne avant d'avoir cliqué sur <b>Publier</b>.</p>
+    <div class="cards" id="cards"></div>
+  </main>
+</section>
+
+<script>
+const MAX_SIDE = 2000;   // longest side in pixels after resizing
+const QUALITY = 0.82;
+
+let password = sessionStorage.getItem("utpm-pw") || "";
+let headSha = null;
+let photos = [];         // [{ src, caption, w, h, url?, data? }]; "data" (base64) means not uploaded yet
+let saved = "";          // snapshot of the published state, to know if there are changes
+let busy = false;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+async function api(path, init = {}) {
+  const res = await fetch("../api/" + path, {
+    ...init, headers: { ...(init.headers || {}), Authorization: "Bearer " + password },
+  });
+  const body = await res.json().catch(() => ({ error: `Erreur ${res.status}` }));
+  if (!res.ok) throw Object.assign(new Error(body.error || `Erreur ${res.status}`), { status: res.status });
+  return body;
+}
+
+// ---------- login ----------
+$("login-form").addEventListener("submit", async e => {
+  e.preventDefault();
+  password = $("password").value;
+  $("login-err").textContent = "";
+  await load();
+});
+
+async function load() {
+  try {
+    const data = await api("photos");
+    sessionStorage.setItem("utpm-pw", password);
+    headSha = data.headSha;
+    photos = data.photos.map(p => ({ ...p, url: "../" + p.src }));
+    saved = snapshot();
+    $("login").classList.add("hidden");
+    $("editor").classList.remove("hidden");
+    render();
+  } catch (err) {
+    sessionStorage.removeItem("utpm-pw");
+    $("login").classList.remove("hidden");
+    $("editor").classList.add("hidden");
+    $("login-err").textContent = err.message;
+  }
+}
+if (password) load();
+
+// ---------- editor ----------
+const snapshot = () => JSON.stringify(photos.map(p => [p.src, p.caption || ""]));
+const dirty = () => snapshot() !== saved;
+
+function render() {
+  const cards = $("cards");
+  if (!photos.length) {
+    cards.innerHTML = `<p class="empty muted">Aucune photo pour l'instant.</p>`;
+  } else {
+    cards.innerHTML = photos.map((p, i) => `
+      <div class="card ${p.data ? "new" : ""}" draggable="true" data-i="${i}">
+        <div class="img" style="background-image:url('${esc(p.url)}')"></div>
+        ${p.data ? `<span class="tag">nouvelle</span>` : i === 0 ? `<span class="first">accueil</span>` : ""}
+        <div class="row">
+          <input value="${esc(p.caption)}" placeholder="Légende (facultatif)" data-i="${i}">
+          <button class="icon del" title="Supprimer" data-del="${i}">✕</button>
+        </div>
+      </div>`).join("");
+  }
+  updateStatus();
+}
+
+function updateStatus(text, cls = "") {
+  const n = photos.filter(p => p.data).length;
+  $("publish").disabled = busy || !dirty();
+  $("status").className = "status " + cls;
+  $("status").textContent = text ?? (dirty()
+    ? `Modifications non publiées${n ? ` (${n} nouvelle${n > 1 ? "s" : ""} photo${n > 1 ? "s" : ""})` : ""}`
+    : `${photos.length} photo${photos.length > 1 ? "s" : ""} en ligne`);
+}
+
+$("cards").addEventListener("input", e => {
+  if (e.target.matches("input[data-i]")) { photos[+e.target.dataset.i].caption = e.target.value; updateStatus(); }
+});
+$("cards").addEventListener("click", e => {
+  const b = e.target.closest("[data-del]");
+  if (!b) return;
+  const p = photos[+b.dataset.del];
+  if (!p.data && !confirm("Retirer cette photo du site ?")) return;
+  photos.splice(+b.dataset.del, 1);
+  render();
+});
+
+// Reorder by dragging cards
+let dragFrom = null;
+$("cards").addEventListener("dragstart", e => {
+  const c = e.target.closest(".card");
+  if (!c) return;
+  dragFrom = +c.dataset.i;
+  c.classList.add("dragging");
+  e.dataTransfer.effectAllowed = "move";
+});
+$("cards").addEventListener("dragover", e => {
+  if (dragFrom === null) return;
+  e.preventDefault();
+  document.querySelectorAll(".card.target").forEach(c => c.classList.remove("target"));
+  e.target.closest(".card")?.classList.add("target");
+});
+$("cards").addEventListener("drop", e => {
+  if (dragFrom === null) return;
+  e.preventDefault();
+  const c = e.target.closest(".card");
+  if (c) {
+    const [moved] = photos.splice(dragFrom, 1);
+    photos.splice(+c.dataset.i, 0, moved);
+  }
+  dragFrom = null;
+  render();
+});
+$("cards").addEventListener("dragend", () => { dragFrom = null; render(); });
+
+// ---------- adding photos ----------
+const drop = $("drop");
+["dragenter", "dragover"].forEach(t => drop.addEventListener(t, e => {
+  if (dragFrom !== null) return;
+  e.preventDefault(); drop.classList.add("over");
+}));
+["dragleave", "drop"].forEach(t => drop.addEventListener(t, () => drop.classList.remove("over")));
+drop.addEventListener("drop", e => { if (dragFrom === null) { e.preventDefault(); addFiles(e.dataTransfer.files); } });
+// Dropping outside the box should not open the image in the tab.
+window.addEventListener("dragover", e => e.preventDefault());
+window.addEventListener("drop", e => e.preventDefault());
+$("file").addEventListener("change", e => { addFiles(e.target.files); e.target.value = ""; });
+
+async function addFiles(files) {
+  const list = [...files].filter(f => f.type.startsWith("image/"));
+  let failed = 0;
+  for (const [n, f] of list.entries()) {
+    updateStatus(`Préparation ${n + 1} / ${list.length}…`);
+    try { photos.push(await shrink(f)); } catch { failed++; }
+  }
+  render();
+  if (failed) updateStatus(`${failed} fichier(s) illisible(s) (format non pris en charge ?)`, "bad");
+}
+
+// Resize in the browser so uploads stay small and the site stays fast.
+async function shrink(file) {
+  const bmp = await createImageBitmap(file, { imageOrientation: "from-image" });
+  const k = Math.min(1, MAX_SIDE / Math.max(bmp.width, bmp.height));
+  const w = Math.round(bmp.width * k), h = Math.round(bmp.height * k);
+  const canvas = Object.assign(document.createElement("canvas"), { width: w, height: h });
+  canvas.getContext("2d").drawImage(bmp, 0, 0, w, h);
+  let blob = await new Promise(r => canvas.toBlob(r, "image/webp", QUALITY));
+  let ext = "webp";
+  if (!blob || blob.type !== "image/webp") {   // old Safari cannot encode WebP
+    blob = await new Promise(r => canvas.toBlob(r, "image/jpeg", QUALITY));
+    ext = "jpg";
+  }
+  const data = await new Promise(r => {
+    const fr = new FileReader();
+    fr.onload = () => r(fr.result.split(",")[1]);
+    fr.readAsDataURL(blob);
+  });
+  const id = new Date().toISOString().slice(0, 10) + "-" + crypto.randomUUID().slice(0, 8);
+  return { src: `images/${id}.${ext}`, caption: "", w, h, data, url: URL.createObjectURL(blob) };
+}
+
+// ---------- publishing ----------
+$("publish").addEventListener("click", async () => {
+  busy = true;
+  $("publish").disabled = true;
+  try {
+    const fresh = photos.filter(p => p.data);
+    for (const [n, p] of fresh.entries()) {
+      updateStatus(`Envoi des photos ${n + 1} / ${fresh.length}…`);
+      p.blob = (await api("blob", { method: "POST", body: p.data })).sha;
+    }
+    updateStatus("Publication…");
+    const res = await api("photos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ headSha, photos: photos.map(({ src, caption, w, h, blob }) => ({ src, caption, w, h, blob })) }),
+    });
+    headSha = res.headSha;
+    photos.forEach(p => { delete p.data; delete p.blob; });
+    saved = snapshot();
+    busy = false;
+    render();
+    updateStatus("Publié ✓ Le site sera à jour d'ici 1 à 2 minutes.", "ok");
+  } catch (err) {
+    busy = false;
+    updateStatus(err.message, "bad");
+    $("publish").disabled = false;
+    if (err.status === 401) load();
+  }
+});
+
+window.addEventListener("beforeunload", e => { if (dirty()) e.preventDefault(); });
+</script>
+</body>
+</html>
