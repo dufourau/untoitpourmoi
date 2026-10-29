@@ -41,7 +41,7 @@
   .status.ok { color: var(--ok); } .status.bad { color: var(--bad); }
   main { padding: 24px clamp(16px, 4vw, 40px) 60px; max-width: 1200px; margin: 0 auto; }
 
-  .drop { border: 2px dashed #55554f; border-radius: 16px; padding: 38px 20px; text-align: center; cursor: pointer;
+  .drop { display: block; border: 2px dashed #55554f; border-radius: 16px; padding: 38px 20px; text-align: center; cursor: pointer;
           background: rgba(55,55,51,.35); transition: all .2s; }
   .drop strong { display: block; font-size: 1.15rem; color: var(--bone); margin-bottom: 4px; }
   .drop.over { border-color: var(--ember); background: rgba(201,138,94,.12); }
@@ -65,7 +65,7 @@
           cursor: pointer; flex: 0 0 auto; }
   .icon:hover { color: var(--bone); background: #1f1f1d; }
   .icon.del:hover { color: var(--bad); }
-  .empty { text-align: center; padding: 30px; }
+  .empty { grid-column: 1 / -1; text-align: center; padding: 30px; }
 </style>
 </head>
 <body>

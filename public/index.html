@@ -51,9 +51,12 @@
                  text-transform: uppercase; letter-spacing: .16em; color: var(--night);
                  background: var(--ember); padding: 10px 18px; border-radius: 999px; transition: background .2s; }
   .donate-link:hover { background: var(--ember-hi); }
+  .donate-link { white-space: nowrap; }
   @media (max-width: 560px) {
-    .logo { font-size: 1.25rem; }
-    .donate-link { padding: 8px 12px; letter-spacing: .08em; }
+    header { padding: 16px; gap: 8px; }
+    .logo { font-size: 1.15rem; white-space: normal; line-height: 1.05; }
+    .views button { padding: 5px 6px; }
+    header .donate-link { padding: 8px 12px; letter-spacing: .06em; font-size: .7rem; }
   }
 
   /* Slider */
@@ -162,7 +165,7 @@ function build(photos) {
   slides = [{ cover: true, src: cover?.src }].concat(photos.slice(1));
 
   track.innerHTML = slides.map((s, i) => s.cover
-    ? `<div class="slide cover" data-i="0">
+    ? `<div class="slide cover current" data-i="0">
          ${s.src ? `<img src="${esc(s.src)}" alt="">` : ""}
          <div class="inner">
            <h1>Un toit pour moi</h1>
