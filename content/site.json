@@ -1,0 +1,15 @@
+{
+  "title": "Un toit pour moi",
+  "tagline": "Aidez-nous à construire un lieu de vie pour des personnes en situation de handicap.",
+  "hero_image": "",
+  "story": "Écrivez ici l'histoire du projet en quelques paragraphes : qui vous êtes, pour qui, pourquoi maintenant.\n\nUn deuxième paragraphe sur ce qui sera construit et comment.\n\nUn troisième paragraphe sur l'impact concret pour les résidents.",
+  "helloasso_url": "",
+  "goal_items": [
+    { "amount": "20 €", "text": "finance une journée d'activité adaptée" },
+    { "amount": "50 €", "text": "équipe une chambre d'un rail de transfert" },
+    { "amount": "150 €", "text": "paie un mois de matériel pédagogique" }
+  ],
+  "photos": [],
+  "contact_email": "",
+  "association_name": "Association Un toit pour moi"
+}

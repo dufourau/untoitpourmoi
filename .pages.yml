@@ -1,0 +1,55 @@
+# Pages CMS config (https://pagescms.org). The admin page at app.pagescms.org reads this file.
+media:
+  input: images
+  output: /images
+
+content:
+  - name: site
+    label: Le site
+    type: file
+    path: content/site.json
+    format: json
+    fields:
+      - name: title
+        label: Titre
+        type: string
+      - name: tagline
+        label: Phrase d'accroche
+        type: text
+      - name: hero_image
+        label: Grande photo du haut
+        type: image
+      - name: story
+        label: Le projet (laisser une ligne vide entre les paragraphes)
+        type: text
+      - name: helloasso_url
+        label: Lien de la campagne HelloAsso
+        type: string
+      - name: photos
+        label: Photos de la galerie
+        type: object
+        list: true
+        fields:
+          - name: image
+            label: Photo
+            type: image
+          - name: caption
+            label: Légende
+            type: string
+      - name: goal_items
+        label: Ce que permet votre don
+        type: object
+        list: true
+        fields:
+          - name: amount
+            label: Montant
+            type: string
+          - name: text
+            label: Ce que ça finance
+            type: string
+      - name: contact_email
+        label: Email de contact
+        type: string
+      - name: association_name
+        label: Nom de l'association
+        type: string
