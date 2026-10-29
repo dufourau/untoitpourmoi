@@ -31,6 +31,9 @@
   .login input { padding: 12px 14px; border-radius: 10px; border: 1px solid #4a4a45; background: var(--night);
                  color: var(--bone); }
   .err { color: var(--bad); min-height: 1.4em; margin: 0; font-size: .92rem; }
+  .login label { display: grid; gap: 6px; }
+  .small { font-size: .85rem; }
+  .login a { justify-self: center; }
 
   /* Editor */
   .top { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
@@ -77,6 +80,21 @@
     <input type="password" id="password" placeholder="Mot de passe" autocomplete="current-password" required autofocus>
     <button class="btn" type="submit">Entrer</button>
     <p class="err" id="login-err"></p>
+    <a href="#" id="to-setup" class="muted small">Configurer ou remplacer la clé d'accès</a>
+  </form>
+
+  <form id="setup-form" class="hidden">
+    <h1>Configuration</h1>
+    <p class="muted" style="margin:0">À faire une seule fois (et quand la clé GitHub expire).
+      La clé est enregistrée chiffrée avec le mot de passe ci-dessous.</p>
+    <label class="small">Clé GitHub (fine-grained token, accès « Contents : read and write » à ce dépôt)
+      <input type="password" id="setup-token" placeholder="github_pat_…" autocomplete="off" required></label>
+    <label class="small">Mot de passe de l'espace admin (16 caractères minimum)
+      <input type="text" id="setup-password" autocomplete="off" required minlength="16"></label>
+    <p class="muted small" style="margin:0">Notez-le : il ne peut pas être retrouvé.</p>
+    <button class="btn" type="submit">Enregistrer</button>
+    <p class="err" id="setup-err"></p>
+    <a href="#" id="to-login" class="muted small">Retour</a>
   </form>
 </section>
 
@@ -103,7 +121,15 @@
 const MAX_SIDE = 2000;   // longest side in pixels after resizing
 const QUALITY = 0.82;
 
-let password = sessionStorage.getItem("utpm-pw") || "";
+const REPO = "dufourau/untoitpourmoi";
+// ?branch=… lets a test publish go to a throwaway branch.
+const BRANCH = new URLSearchParams(location.search).get("branch") || "main";
+const SITE_DIR = "docs";                       // GitHub Pages serves this folder
+const PHOTOS_PATH = `${SITE_DIR}/content/photos.json`;
+const KEY_PATH = `${SITE_DIR}/admin/key.json`;
+const ITERATIONS = 600000;                     // slows down password guessing on the public key file
+
+let token = sessionStorage.getItem("utpm-token") || "";
 let headSha = null;
 let photos = [];         // [{ src, caption, w, h, url?, data? }]; "data" (base64) means not uploaded yet
 let saved = "";          // snapshot of the published state, to know if there are changes
@@ -112,27 +138,125 @@ let busy = false;
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
-async function api(path, init = {}) {
-  const res = await fetch("../api/" + path, {
-    ...init, headers: { ...(init.headers || {}), Authorization: "Bearer " + password },
+// ---------- GitHub ----------
+async function gh(path, init = {}, auth = token) {
+  const res = await fetch(`https://api.github.com/repos/${REPO}${path}`, {
+    ...init,
+    cache: "no-store",
+    headers: { Authorization: `Bearer ${auth}`, Accept: "application/vnd.github+json",
+               ...(init.body ? { "Content-Type": "application/json" } : {}) },
   });
-  const body = await res.json().catch(() => ({ error: `Erreur ${res.status}` }));
-  if (!res.ok) throw Object.assign(new Error(body.error || `Erreur ${res.status}`), { status: res.status });
-  return body;
+  if (!res.ok) {
+    const msg = res.status === 401 ? "Clé GitHub refusée (expirée ou invalide)."
+              : res.status === 403 || res.status === 404 ? "La clé GitHub n'a pas accès en écriture à ce dépôt."
+              : res.status === 422 || res.status === 409 ? "La galerie a été modifiée ailleurs entre-temps. Rechargez la page."
+              : `Erreur GitHub ${res.status}`;
+    throw Object.assign(new Error(msg), { status: res.status });
+  }
+  return res.json();
 }
 
-// ---------- login ----------
+const b64 = bytes => btoa(String.fromCharCode(...new Uint8Array(bytes)));
+const unb64 = s => Uint8Array.from(atob(s.replace(/\n/g, "")), c => c.charCodeAt(0));
+
+async function readPhotos(auth = token) {
+  const ref = await gh(`/git/ref/heads/${BRANCH}`, {}, auth);
+  let list = [];
+  try {
+    const file = await gh(`/contents/${PHOTOS_PATH}?ref=${ref.object.sha}`, {}, auth);
+    list = JSON.parse(new TextDecoder().decode(unb64(file.content)));
+  } catch (err) { if (err.status !== 404) throw err; }
+  return { headSha: ref.object.sha, photos: list };
+}
+
+// One commit for everything. entries: { path, sha } adds an uploaded blob, { path, sha: null }
+// deletes, { path, content } writes a text file.
+async function commit(parentSha, entries, message, auth = token) {
+  const parent = await gh(`/git/commits/${parentSha}`, {}, auth);
+  const tree = await gh("/git/trees", { method: "POST", body: JSON.stringify({
+    base_tree: parent.tree.sha,
+    tree: entries.map(e => ({ path: e.path, mode: "100644", type: "blob",
+                              ...(e.content !== undefined ? { content: e.content } : { sha: e.sha }) })),
+  }) }, auth);
+  const c = await gh("/git/commits", { method: "POST",
+    body: JSON.stringify({ message, tree: tree.sha, parents: [parentSha] }) }, auth);
+  // Not forced: if someone else published in between, GitHub refuses (422).
+  await gh(`/git/refs/heads/${BRANCH}`, { method: "PATCH", body: JSON.stringify({ sha: c.sha }) }, auth);
+  return c.sha;
+}
+
+// ---------- the GitHub token, stored encrypted with the admin password ----------
+async function aesKey(password, salt, iterations) {
+  const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations, hash: "SHA-256" },
+                                 base, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+}
+
+async function encryptToken(tok, password) {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, await aesKey(password, salt, ITERATIONS),
+                                         new TextEncoder().encode(tok));
+  return { v: 1, iterations: ITERATIONS, salt: b64(salt), iv: b64(iv), ct: b64(ct) };
+}
+
+async function decryptToken(box, password) {
+  const key = await aesKey(password, unb64(box.salt), box.iterations);
+  const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: unb64(box.iv) }, key, unb64(box.ct));
+  return new TextDecoder().decode(pt);
+}
+
+// ---------- login / setup ----------
+const show = id => ["login-form", "setup-form"].forEach(f => $(f).classList.toggle("hidden", f !== id));
+
+$("to-setup").onclick = e => {
+  e.preventDefault();
+  // Suggest a strong random password (about 80 bits).
+  const abc = "abcdefghjkmnpqrstuvwxyz23456789";
+  const r = crypto.getRandomValues(new Uint8Array(16));
+  $("setup-password").value = [...r].map(x => abc[x % abc.length]).join("").match(/.{4}/g).join("-");
+  show("setup-form");
+};
+$("to-login").onclick = e => { e.preventDefault(); show("login-form"); };
+
 $("login-form").addEventListener("submit", async e => {
   e.preventDefault();
-  password = $("password").value;
-  $("login-err").textContent = "";
-  await load();
+  $("login-err").textContent = "Vérification…";
+  try {
+    const res = await fetch(`key.json?t=${Date.now()}`, { cache: "no-store" });
+    if (!res.ok) throw new Error("Aucune clé configurée : cliquez sur « Configurer » ci-dessous.");
+    const box = await res.json();
+    try { token = await decryptToken(box, $("password").value); }
+    catch { await new Promise(r => setTimeout(r, 500)); throw new Error("Mot de passe incorrect."); }
+    $("login-err").textContent = "";
+    await load();
+  } catch (err) {
+    $("login-err").textContent = err.message;
+  }
+});
+
+$("setup-form").addEventListener("submit", async e => {
+  e.preventDefault();
+  const tok = $("setup-token").value.trim(), pw = $("setup-password").value;
+  $("setup-err").textContent = "Enregistrement…";
+  try {
+    const { headSha: head } = await readPhotos(tok);    // also checks the token can read the repo
+    const box = await encryptToken(tok, pw);
+    await commit(head, [{ path: KEY_PATH, content: JSON.stringify(box, null, 2) + "\n" }],
+                 "Admin : nouvelle clé d'accès chiffrée", tok);
+    token = tok;
+    $("setup-err").textContent = "";
+    $("setup-token").value = "";
+    await load();
+  } catch (err) {
+    $("setup-err").textContent = err.message;
+  }
 });
 
 async function load() {
   try {
-    const data = await api("photos");
-    sessionStorage.setItem("utpm-pw", password);
+    const data = await readPhotos();
+    sessionStorage.setItem("utpm-token", token);
     headSha = data.headSha;
     photos = data.photos.map(p => ({ ...p, url: "../" + p.src }));
     saved = snapshot();
@@ -140,13 +264,13 @@ async function load() {
     $("editor").classList.remove("hidden");
     render();
   } catch (err) {
-    sessionStorage.removeItem("utpm-pw");
+    sessionStorage.removeItem("utpm-token");
     $("login").classList.remove("hidden");
     $("editor").classList.add("hidden");
     $("login-err").textContent = err.message;
   }
 }
-if (password) load();
+if (token) load();
 
 // ---------- editor ----------
 const snapshot = () => JSON.stringify(photos.map(p => [p.src, p.caption || ""]));
@@ -273,15 +397,22 @@ $("publish").addEventListener("click", async () => {
     const fresh = photos.filter(p => p.data);
     for (const [n, p] of fresh.entries()) {
       updateStatus(`Envoi des photos ${n + 1} / ${fresh.length}…`);
-      p.blob = (await api("blob", { method: "POST", body: p.data })).sha;
+      p.blob = (await gh("/git/blobs", { method: "POST",
+        body: JSON.stringify({ content: p.data, encoding: "base64" }) })).sha;
     }
     updateStatus("Publication…");
-    const res = await api("photos", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ headSha, photos: photos.map(({ src, caption, w, h, blob }) => ({ src, caption, w, h, blob })) }),
-    });
-    headSha = res.headSha;
+    const list = photos.map(p => ({ src: p.src, caption: (p.caption || "").slice(0, 200), w: p.w, h: p.h }));
+    const kept = new Set(list.map(p => p.src));
+    const current = await readPhotos();
+    const entries = [
+      ...fresh.map(p => ({ path: `${SITE_DIR}/${p.src}`, sha: p.blob })),
+      ...current.photos.filter(p => !kept.has(p.src)).map(p => ({ path: `${SITE_DIR}/${p.src}`, sha: null })),
+      { path: PHOTOS_PATH, content: JSON.stringify(list, null, 2) + "\n" },
+    ];
+    const removed = entries.filter(e => e.sha === null).length;
+    // Parent is the commit the page loaded; if someone published since, the ref update fails.
+    headSha = await commit(headSha, entries, `Galerie : ${list.length} photos` +
+      (fresh.length ? `, ${fresh.length} ajoutée(s)` : "") + (removed ? `, ${removed} supprimée(s)` : ""));
     photos.forEach(p => { delete p.data; delete p.blob; });
     saved = snapshot();
     busy = false;
