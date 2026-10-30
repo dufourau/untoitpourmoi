@@ -73,9 +73,10 @@
 
   /* First slide: the title card */
   .cover { display: grid; place-items: center; text-align: center; }
-  .cover::before { content: ""; position: absolute; inset: 0; background: rgba(20,19,17,.42); }
+  .cover::before { content: ""; position: absolute; inset: 0; z-index: 1;
+                   background: radial-gradient(ellipse at center, rgba(20,19,17,.62) 0%, rgba(20,19,17,.38) 75%); }
   .cover img { position: absolute; inset: 0; }
-  .cover .inner { position: relative; padding: 24px; }
+  .cover .inner { position: relative; z-index: 2; padding: 24px; text-shadow: 0 2px 18px rgba(0,0,0,.45); }
   .cover h1 { font-family: "Cormorant Garamond", serif; font-weight: 500; margin: 0;
               font-size: clamp(2.6rem, 7vw, 5.6rem); line-height: 1; color: #f1ede6; }
   .cover p { margin: 14px 0 26px; font-size: .78rem; text-transform: uppercase; letter-spacing: .26em; color: var(--bone); }
