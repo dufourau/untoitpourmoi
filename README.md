@@ -7,7 +7,12 @@ A dark, cinematic photo gallery (slider and grid views) that links to the associ
 
 ## How it works
 - `docs/` is what GitHub Pages serves.
-- `docs/index.html` is the gallery. It reads `docs/content/photos.json`, and the first photo is the backdrop of the title slide. The HelloAsso links (the campaign `formulaires/1` and the association page) are hard-coded there.
+- `docs/index.html` is the one-page site: hero, "Qui sommes-nous", the garden slider, the "Notre histoire" timeline, a before/after comparison and a last call to donate. The HelloAsso links (the campaign `formulaires/1` and the association page) are hard-coded at the top of its script.
+- Its content comes from three files in `docs/content/`:
+  - `photos.json`: the garden renders (artist's views). The first one is also the hero background, and the first four close the timeline as "Demain".
+  - `timeline.json`: `{src, caption, w, h, date}`, where `date` is `YYYY-MM` or empty for "Aujourd'hui". The site groups photos by month, in date order.
+  - `compare.json`: `[{before, after, caption}]`, where `before` is a photo of a spot today and `after` the render of the same spot, ideally taken from the same angle. While it is empty, the before/after section stays hidden.
+- The admin page edits `photos.json` (tab "Le jardin") and `timeline.json` (tab "Notre histoire"). `compare.json` is edited by hand for now.
 - `docs/admin/index.html` is the admin page. On login, the password decrypts a GitHub access key stored in `docs/admin/key.json` (AES-GCM, PBKDF2 with 600,000 iterations). The browser then talks to GitHub directly: each **Publier** is one commit, and GitHub Pages redeploys in 1–2 min.
 - Photos are resized in the browser to 2000 px WebP (about 50–400 KB) before upload.
 
@@ -29,8 +34,9 @@ When the key expires, publishing fails with "Clé GitHub refusée". Make a new k
 ## For the person adding photos
 1. Open **https://dufourau.github.io/untoitpourmoi/admin/**.
 2. Type the password.
-3. Drag photos into the box, or click it to choose them. Add a caption if you want one. Drag the thumbnails to change the order; the first one is the background of the home page. Use ✕ to remove a photo.
-4. Click **Publier**. The site updates within 1–2 minutes.
+3. Choose the tab: **Le jardin** (images of the future garden) or **Notre histoire** (dated photos of the construction and of today).
+4. Drag photos into the box, or click it to choose them. Add a caption if you want one. In **Le jardin**, drag the thumbnails to change the order; the first one is the background of the home page. In **Notre histoire**, set the month of each photo, or leave it empty for "Aujourd'hui". Use ✕ to remove a photo.
+5. Click **Publier**. The site updates within 1–2 minutes.
 
 Only publish photos of people who have signed an image-rights consent form (signed by their legal guardian where needed).
 

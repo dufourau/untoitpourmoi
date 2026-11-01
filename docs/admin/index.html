@@ -6,30 +6,32 @@
 <meta name="robots" content="noindex">
 <title>Admin · Un toit pour moi</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --night: #1c1b19; --stone: #373733; --ash: #928e84; --mist: #a7a59c; --bone: #d5d1c8;
-    --ember: #c98a5e; --ember-hi: #dfa071; --ok: #7fae8a; --bad: #d9776a;
+    --cream: #f7f3ea; --paper: #fffdf8; --moss: #2f4a2c; --leaf: #557a45; --sage-soft: #e6eedd;
+    --ink: #2a2b25; --muted: #6b6a60; --line: #e2dccd; --field: #fff;
+    --sun: #f4b223; --sun-hi: #f8c44d; --ok: #3f7f3a; --bad: #b8433a;
   }
   * { box-sizing: border-box; }
-  body { margin: 0; min-height: 100vh; background: var(--night); color: var(--bone);
-         font: 15px/1.55 "Karla", system-ui, sans-serif; }
-  h1 { font-family: "Cormorant Garamond", serif; font-weight: 600; font-size: 2rem; margin: 0; }
+  body { margin: 0; min-height: 100vh; background: var(--cream); color: var(--ink);
+         font: 15px/1.55 "Nunito", system-ui, sans-serif; }
+  h1 { font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 2rem; margin: 0; color: var(--moss); }
   button, input { font: inherit; }
-  .btn { background: var(--ember); color: var(--night); border: 0; border-radius: 999px; padding: 11px 22px;
+  .btn { background: var(--sun); color: #2a2208; border: 0; border-radius: 999px; padding: 11px 22px;
          font-weight: 700; cursor: pointer; transition: background .2s; }
-  .btn:hover { background: var(--ember-hi); }
+  .btn:hover { background: var(--sun-hi); }
   .btn:disabled { opacity: .4; cursor: default; }
-  .muted { color: var(--ash); }
+  .muted { color: var(--muted); }
   .hidden { display: none !important; }
 
   /* Login */
   .login { min-height: 100vh; display: grid; place-items: center; padding: 16px; }
-  .login form { background: var(--stone); padding: 32px; border-radius: 16px; width: min(380px, 100%);
-                box-shadow: 0 30px 80px rgba(0,0,0,.5); display: grid; gap: 14px; }
-  .login input { padding: 12px 14px; border-radius: 10px; border: 1px solid #4a4a45; background: var(--night);
-                 color: var(--bone); }
+  .login form { background: var(--paper); padding: 32px; border-radius: 16px; width: min(380px, 100%);
+                box-shadow: 0 30px 60px -20px rgba(47,74,44,.3); display: grid; gap: 14px; border: 1px solid var(--line); }
+  .login input { padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--field);
+                 color: var(--ink); }
+  .login .logo { width: 72px; height: 72px; justify-self: center; }
   .err { color: var(--bad); min-height: 1.4em; margin: 0; font-size: .92rem; }
   .login label { display: grid; gap: 6px; }
   .small { font-size: .85rem; }
@@ -37,36 +39,43 @@
 
   /* Editor */
   .top { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-         padding: 14px clamp(16px, 4vw, 40px); background: rgba(28,27,25,.94); backdrop-filter: blur(8px);
-         border-bottom: 1px solid var(--stone); }
-  .top h1 { font-size: 1.5rem; margin-right: auto; }
+         padding: 12px clamp(16px, 4vw, 40px); background: rgba(247,243,234,.94); backdrop-filter: blur(8px);
+         border-bottom: 1px solid var(--line); }
+  .top img { width: 40px; height: 40px; }
+  .tabs { display: flex; gap: 4px; background: var(--paper); border: 1px solid var(--line); padding: 4px; border-radius: 12px; }
+  .tabs button { background: none; border: 0; padding: 7px 16px; border-radius: 8px; cursor: pointer; font-weight: 700;
+                 color: var(--muted); }
+  .tabs button.on { background: var(--moss); color: #fff; }
+  .top .spacer { margin-right: auto; }
   .status { font-size: .9rem; }
   .status.ok { color: var(--ok); } .status.bad { color: var(--bad); }
   main { padding: 24px clamp(16px, 4vw, 40px) 60px; max-width: 1200px; margin: 0 auto; }
 
-  .drop { display: block; border: 2px dashed #55554f; border-radius: 16px; padding: 38px 20px; text-align: center; cursor: pointer;
-          background: rgba(55,55,51,.35); transition: all .2s; }
-  .drop strong { display: block; font-size: 1.15rem; color: var(--bone); margin-bottom: 4px; }
-  .drop.over { border-color: var(--ember); background: rgba(201,138,94,.12); }
+  .drop { display: block; border: 2px dashed #b9c7ab; border-radius: 16px; padding: 38px 20px; text-align: center; cursor: pointer;
+          background: var(--sage-soft); transition: all .2s; }
+  .drop strong { display: block; font-size: 1.15rem; color: var(--moss); margin-bottom: 4px; }
+  .drop.over { border-color: var(--sun); background: #fdf1d3; }
   .hint { font-size: .88rem; margin: 10px 0 26px; }
 
   .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
-  .card { background: var(--stone); border-radius: 12px; overflow: hidden; position: relative;
-          border: 2px solid transparent; }
-  .card.new { border-color: var(--ember); }
+  .card { background: var(--paper); border-radius: 12px; overflow: hidden; position: relative;
+          border: 2px solid var(--line); }
+  .card.new { border-color: var(--sun); }
   .card.dragging { opacity: .4; }
-  .card.target { border-color: var(--bone); }
-  .card .img { aspect-ratio: 4 / 3; background: #262623 center/cover no-repeat; cursor: grab; }
-  .card .tag { position: absolute; top: 8px; left: 8px; background: var(--ember); color: var(--night);
+  .card.target { border-color: var(--leaf); }
+  .card .img { aspect-ratio: 4 / 3; background: var(--sage-soft) center/cover no-repeat; cursor: grab; }
+  .card .tag { position: absolute; top: 8px; left: 8px; background: var(--sun); color: #2a2208;
                font-size: .72rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
-  .card .first { position: absolute; top: 8px; left: 8px; background: var(--bone); color: var(--night);
+  .card .first { position: absolute; top: 8px; left: 8px; background: var(--moss); color: #fff;
                  font-size: .72rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
   .card .row { display: flex; gap: 6px; padding: 8px; align-items: center; }
-  .card input { flex: 1; min-width: 0; padding: 7px 9px; border-radius: 8px; border: 1px solid #4a4a45;
-                background: var(--night); color: var(--bone); font-size: .88rem; }
-  .icon { background: #262623; border: 0; color: var(--mist); width: 32px; height: 32px; border-radius: 8px;
+  .card .row + .row { padding-top: 0; }
+  .card input { flex: 1; min-width: 0; padding: 7px 9px; border-radius: 8px; border: 1px solid var(--line);
+                background: var(--field); color: var(--ink); font: inherit; font-size: .88rem; }
+  .card label { font-size: .8rem; font-weight: 700; color: var(--muted); }
+  .icon { background: var(--cream); border: 1px solid var(--line); color: var(--muted); width: 32px; height: 32px; border-radius: 8px;
           cursor: pointer; flex: 0 0 auto; }
-  .icon:hover { color: var(--bone); background: #1f1f1d; }
+  .icon:hover { color: var(--ink); background: var(--sage-soft); }
   .icon.del:hover { color: var(--bad); }
   .empty { grid-column: 1 / -1; text-align: center; padding: 30px; }
 </style>
@@ -75,8 +84,9 @@
 
 <section class="login" id="login">
   <form id="login-form">
+    <img class="logo" src="../images/logo.webp" alt="">
     <h1>Un toit pour moi</h1>
-    <p class="muted" style="margin:0">Espace admin de la galerie</p>
+    <p class="muted" style="margin:0">Espace admin du site</p>
     <input type="password" id="password" placeholder="Mot de passe" autocomplete="current-password" required autofocus>
     <button class="btn" type="submit">Entrer</button>
     <p class="err" id="login-err"></p>
@@ -100,7 +110,12 @@
 
 <section id="editor" class="hidden">
   <div class="top">
-    <h1>Galerie</h1>
+    <img src="../images/logo.webp" alt="">
+    <div class="tabs" role="tablist">
+      <button class="on" data-tab="photos" role="tab">Le jardin</button>
+      <button data-tab="timeline" role="tab">Notre histoire</button>
+    </div>
+    <span class="spacer"></span>
     <span class="status" id="status"></span>
     <a href="../" target="_blank" class="muted">Voir le site ↗</a>
     <button class="btn" id="publish" disabled>Publier</button>
@@ -111,8 +126,7 @@
       <span class="muted">ou cliquez pour les choisir</span>
       <input type="file" id="file" accept="image/*" multiple hidden>
     </label>
-    <p class="hint muted">Les photos sont réduites automatiquement. Faites glisser les vignettes pour changer l'ordre :
-      la première sert de fond à la page d'accueil. Rien n'est en ligne avant d'avoir cliqué sur <b>Publier</b>.</p>
+    <p class="hint muted" id="hint"></p>
     <div class="cards" id="cards"></div>
   </main>
 </section>
@@ -125,13 +139,18 @@ const REPO = "dufourau/untoitpourmoi";
 // ?branch=… lets a test publish go to a throwaway branch.
 const BRANCH = new URLSearchParams(location.search).get("branch") || "main";
 const SITE_DIR = "docs";                       // GitHub Pages serves this folder
-const PHOTOS_PATH = `${SITE_DIR}/content/photos.json`;
+const PATHS = { photos: `${SITE_DIR}/content/photos.json`,       // the garden slider (first = home page)
+                timeline: `${SITE_DIR}/content/timeline.json` }; // "Notre histoire", each photo with a month
 const KEY_PATH = `${SITE_DIR}/admin/key.json`;
 const ITERATIONS = 600000;                     // slows down password guessing on the public key file
 
 let token = sessionStorage.getItem("utpm-token") || "";
 let headSha = null;
-let photos = [];         // [{ src, caption, w, h, url?, data? }]; "data" (base64) means not uploaded yet
+// [{ src, caption, w, h, date?, url?, data? }]; "data" (base64) means not uploaded yet
+const lists = { photos: [], timeline: [] };
+let tab = "photos";
+const cur = () => lists[tab];
+const allPhotos = () => [...lists.photos, ...lists.timeline];
 let saved = "";          // snapshot of the published state, to know if there are changes
 let busy = false;
 
@@ -159,14 +178,17 @@ async function gh(path, init = {}, auth = token) {
 const b64 = bytes => btoa(String.fromCharCode(...new Uint8Array(bytes)));
 const unb64 = s => Uint8Array.from(atob(s.replace(/\n/g, "")), c => c.charCodeAt(0));
 
-async function readPhotos(auth = token) {
+async function readContent(auth = token) {
   const ref = await gh(`/git/ref/heads/${BRANCH}`, {}, auth);
-  let list = [];
-  try {
-    const file = await gh(`/contents/${PHOTOS_PATH}?ref=${ref.object.sha}`, {}, auth);
-    list = JSON.parse(new TextDecoder().decode(unb64(file.content)));
-  } catch (err) { if (err.status !== 404) throw err; }
-  return { headSha: ref.object.sha, photos: list };
+  const out = { headSha: ref.object.sha };
+  for (const [k, path] of Object.entries(PATHS)) {
+    out[k] = [];
+    try {
+      const file = await gh(`/contents/${path}?ref=${ref.object.sha}`, {}, auth);
+      out[k] = JSON.parse(new TextDecoder().decode(unb64(file.content)));
+    } catch (err) { if (err.status !== 404) throw err; }
+  }
+  return out;
 }
 
 // One commit for everything. entries: { path, sha } adds an uploaded blob, { path, sha: null }
@@ -240,7 +262,7 @@ $("setup-form").addEventListener("submit", async e => {
   const tok = $("setup-token").value.trim(), pw = $("setup-password").value;
   $("setup-err").textContent = "Enregistrement…";
   try {
-    const { headSha: head } = await readPhotos(tok);    // also checks the token can read the repo
+    const { headSha: head } = await readContent(tok);    // also checks the token can read the repo
     const box = await encryptToken(tok, pw);
     await commit(head, [{ path: KEY_PATH, content: JSON.stringify(box, null, 2) + "\n" }],
                  "Admin : nouvelle clé d'accès chiffrée", tok);
@@ -255,10 +277,10 @@ $("setup-form").addEventListener("submit", async e => {
 
 async function load() {
   try {
-    const data = await readPhotos();
+    const data = await readContent();
     sessionStorage.setItem("utpm-token", token);
     headSha = data.headSha;
-    photos = data.photos.map(p => ({ ...p, url: "../" + p.src }));
+    for (const k in lists) lists[k] = data[k].map(p => ({ ...p, url: "../" + p.src }));
     saved = snapshot();
     $("login").classList.add("hidden");
     $("editor").classList.remove("hidden");
@@ -273,18 +295,33 @@ async function load() {
 if (token) load();
 
 // ---------- editor ----------
-const snapshot = () => JSON.stringify(photos.map(p => [p.src, p.caption || ""]));
+const snapshot = () => JSON.stringify(Object.values(lists).map(l => l.map(p => [p.src, p.caption || "", p.date || ""])));
+const HINTS = {
+  photos: "Les images du futur jardin. Faites glisser les vignettes pour changer l'ordre : la première sert de fond à la page d'accueil.",
+  timeline: "Les photos de « Notre histoire ». Indiquez le mois de chaque photo : le site les range par date. Sans date, la photo va dans « Aujourd'hui ».",
+};
+document.querySelector(".tabs").addEventListener("click", e => {
+  const b = e.target.closest("[data-tab]");
+  if (!b) return;
+  tab = b.dataset.tab;
+  document.querySelectorAll(".tabs button").forEach(x => x.classList.toggle("on", x === b));
+  render();
+});
+const byDate = (a, b) => (a.date || "9999") < (b.date || "9999") ? -1 : (a.date || "9999") > (b.date || "9999") ? 1 : 0;
 const dirty = () => snapshot() !== saved;
 
 function render() {
-  const cards = $("cards");
-  if (!photos.length) {
+  const cards = $("cards"), list = cur();
+  $("hint").innerHTML = HINTS[tab] + " Rien n'est en ligne avant d'avoir cliqué sur <b>Publier</b>.";
+  if (!list.length) {
     cards.innerHTML = `<p class="empty muted">Aucune photo pour l'instant.</p>`;
   } else {
-    cards.innerHTML = photos.map((p, i) => `
+    cards.innerHTML = list.map((p, i) => `
       <div class="card ${p.data ? "new" : ""}" draggable="true" data-i="${i}">
         <div class="img" style="background-image:url('${esc(p.url)}')"></div>
-        ${p.data ? `<span class="tag">nouvelle</span>` : i === 0 ? `<span class="first">accueil</span>` : ""}
+        ${p.data ? `<span class="tag">nouvelle</span>` : i === 0 && tab === "photos" ? `<span class="first">accueil</span>` : ""}
+        ${tab === "timeline" ? `<div class="row"><label>Mois</label>
+          <input type="month" value="${esc(p.date)}" data-date="${i}" placeholder="MM/AAAA" title="Laisser vide pour « Aujourd'hui »"></div>` : ""}
         <div class="row">
           <input value="${esc(p.caption)}" placeholder="Légende (facultatif)" data-i="${i}">
           <button class="icon del" title="Supprimer" data-del="${i}">✕</button>
@@ -295,23 +332,33 @@ function render() {
 }
 
 function updateStatus(text, cls = "") {
-  const n = photos.filter(p => p.data).length;
+  const n = allPhotos().filter(p => p.data).length;
   $("publish").disabled = busy || !dirty();
   $("status").className = "status " + cls;
   $("status").textContent = text ?? (dirty()
     ? `Modifications non publiées${n ? ` (${n} nouvelle${n > 1 ? "s" : ""} photo${n > 1 ? "s" : ""})` : ""}`
-    : `${photos.length} photo${photos.length > 1 ? "s" : ""} en ligne`);
+    : `${cur().length} photo${cur().length > 1 ? "s" : ""} en ligne`);
 }
 
 $("cards").addEventListener("input", e => {
-  if (e.target.matches("input[data-i]")) { photos[+e.target.dataset.i].caption = e.target.value; updateStatus(); }
+  if (e.target.matches("input[data-i]")) { cur()[+e.target.dataset.i].caption = e.target.value; updateStatus(); }
+});
+$("cards").addEventListener("change", e => {
+  if (!e.target.matches("input[data-date]")) return;
+  // Browsers without a month picker show a text box: accept "2013-04", "04/2013" or "4.2013".
+  const v = e.target.value.trim(), m = v.match(/^(\d{1,2})[\/.\-](\d{4})$/);
+  const date = m ? `${m[2]}-${m[1].padStart(2, "0")}` : v;
+  if (date && !/^\d{4}-(0[1-9]|1[0-2])$/.test(date)) { updateStatus("Mois non reconnu : écrivez par exemple 04/2013.", "bad"); return; }
+  cur()[+e.target.dataset.date].date = date;
+  lists.timeline.sort(byDate);
+  render();
 });
 $("cards").addEventListener("click", e => {
   const b = e.target.closest("[data-del]");
   if (!b) return;
-  const p = photos[+b.dataset.del];
+  const p = cur()[+b.dataset.del];
   if (!p.data && !confirm("Retirer cette photo du site ?")) return;
-  photos.splice(+b.dataset.del, 1);
+  cur().splice(+b.dataset.del, 1);
   render();
 });
 
@@ -335,8 +382,9 @@ $("cards").addEventListener("drop", e => {
   e.preventDefault();
   const c = e.target.closest(".card");
   if (c) {
-    const [moved] = photos.splice(dragFrom, 1);
-    photos.splice(+c.dataset.i, 0, moved);
+    const [moved] = cur().splice(dragFrom, 1);
+    cur().splice(+c.dataset.i, 0, moved);
+    if (tab === "timeline") lists.timeline.sort(byDate);   // the order only matters within a month
   }
   dragFrom = null;
   render();
@@ -361,8 +409,13 @@ async function addFiles(files) {
   let failed = 0;
   for (const [n, f] of list.entries()) {
     updateStatus(`Préparation ${n + 1} / ${list.length}…`);
-    try { photos.push(await shrink(f)); } catch { failed++; }
+    try {
+      const p = await shrink(f);
+      if (tab === "timeline") p.date = new Date(f.lastModified || Date.now()).toISOString().slice(0, 7);   // a first guess
+      cur().push(p);
+    } catch { failed++; }
   }
+  if (tab === "timeline") lists.timeline.sort(byDate);
   render();
   if (failed) updateStatus(`${failed} fichier(s) illisible(s) (format non pris en charge ?)`, "bad");
 }
@@ -394,26 +447,30 @@ $("publish").addEventListener("click", async () => {
   busy = true;
   $("publish").disabled = true;
   try {
-    const fresh = photos.filter(p => p.data);
+    const fresh = allPhotos().filter(p => p.data);
     for (const [n, p] of fresh.entries()) {
       updateStatus(`Envoi des photos ${n + 1} / ${fresh.length}…`);
       p.blob = (await gh("/git/blobs", { method: "POST",
         body: JSON.stringify({ content: p.data, encoding: "base64" }) })).sha;
     }
     updateStatus("Publication…");
-    const list = photos.map(p => ({ src: p.src, caption: (p.caption || "").slice(0, 200), w: p.w, h: p.h }));
-    const kept = new Set(list.map(p => p.src));
-    const current = await readPhotos();
+    lists.timeline.sort(byDate);
+    const out = {
+      photos: lists.photos.map(p => ({ src: p.src, caption: (p.caption || "").slice(0, 200), w: p.w, h: p.h })),
+      timeline: lists.timeline.map(p => ({ src: p.src, caption: (p.caption || "").slice(0, 200), w: p.w, h: p.h, date: p.date || "" })),
+    };
+    const kept = new Set([...out.photos, ...out.timeline].map(p => p.src));
+    const current = await readContent();
+    const gone = [...current.photos, ...current.timeline].filter(p => !kept.has(p.src));
     const entries = [
       ...fresh.map(p => ({ path: `${SITE_DIR}/${p.src}`, sha: p.blob })),
-      ...current.photos.filter(p => !kept.has(p.src)).map(p => ({ path: `${SITE_DIR}/${p.src}`, sha: null })),
-      { path: PHOTOS_PATH, content: JSON.stringify(list, null, 2) + "\n" },
+      ...gone.map(p => ({ path: `${SITE_DIR}/${p.src}`, sha: null })),
+      ...Object.keys(PATHS).map(k => ({ path: PATHS[k], content: JSON.stringify(out[k], null, 2) + "\n" })),
     ];
-    const removed = entries.filter(e => e.sha === null).length;
     // Parent is the commit the page loaded; if someone published since, the ref update fails.
-    headSha = await commit(headSha, entries, `Galerie : ${list.length} photos` +
-      (fresh.length ? `, ${fresh.length} ajoutée(s)` : "") + (removed ? `, ${removed} supprimée(s)` : ""));
-    photos.forEach(p => { delete p.data; delete p.blob; });
+    headSha = await commit(headSha, entries, `Site : ${out.photos.length} images du jardin, ${out.timeline.length} photos d'histoire` +
+      (fresh.length ? `, ${fresh.length} ajoutée(s)` : "") + (gone.length ? `, ${gone.length} supprimée(s)` : ""));
+    allPhotos().forEach(p => { delete p.data; delete p.blob; });
     saved = snapshot();
     busy = false;
     render();

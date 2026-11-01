@@ -3,252 +3,620 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Un toit pour moi</title>
-<meta name="description" content="Un toit pour moi : la galerie photo du projet. Soutenez-nous sur HelloAsso.">
+<title>Un Toit pour Moi · Le jardin thérapeutique</title>
+<meta name="description" content="Aidez l'association Un Toit pour Moi à créer un jardin thérapeutique pour les jeunes adultes de la MAS. Faites un don sur HelloAsso.">
+<meta property="og:title" content="Un Toit pour Moi · Le jardin thérapeutique">
+<meta property="og:description" content="Aidez-nous à faire pousser leur jardin.">
+<meta property="og:image" content="images/jardin-01.webp">
+<link rel="icon" href="images/logo.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --night: #1c1b19;
-    --stone: #373733;
-    --ash: #928e84;
-    --mist: #a7a59c;
-    --bone: #d5d1c8;
-    --ember: #c98a5e;   /* warm accent for the donate actions */
-    --ember-hi: #dfa071;
-    --slide-w: min(62vw, 980px);
-    --slide-h: min(62vh, 620px);
-    --gap: 28px;
-  }
-  @media (max-width: 760px) {
-    :root { --slide-w: 84vw; --slide-h: 62vh; --gap: 14px; }
+    --cream: #f7f3ea;      /* page */
+    --paper: #fffdf8;      /* cards */
+    --moss: #2f4a2c;       /* headings, deep green */
+    --leaf: #557a45;       /* links, accents */
+    --sage: #a9bf9a;
+    --sage-soft: #e6eedd;
+    --lavender: #7d6bb0;   /* from the lavender beds */
+    --lavender-soft: #ece7f6;
+    --sun: #f4b223;        /* the logo's sun: donate buttons */
+    --sun-hi: #f8c44d;
+    --sky: #2f6db5;        /* the logo's roof */
+    --ink: #2a2b25;
+    --muted: #6b6a60;
+    --line: #e2dccd;
+    --radius: 18px;
+    --gutter: clamp(16px, 5vw, 64px);
   }
   * { box-sizing: border-box; }
-  html, body { height: 100%; }
-  body { margin: 0; background: var(--night); color: var(--bone); overflow-x: hidden;
-         font: 15px/1.6 "Karla", system-ui, sans-serif; letter-spacing: .01em; }
-  a { color: inherit; }
+  html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+  body { margin: 0; background: var(--cream); color: var(--ink); overflow-x: hidden;
+         font: 17px/1.65 "Nunito", system-ui, sans-serif; }
+  img { max-width: 100%; }
+  a { color: var(--leaf); }
   button { font: inherit; color: inherit; }
+  h1, h2, h3 { font-family: "Fraunces", Georgia, serif; font-weight: 600; color: var(--moss); line-height: 1.1;
+               font-variation-settings: "SOFT" 100; margin: 0; }
+  h2 { font-size: clamp(2rem, 4.4vw, 3.1rem); }
+  .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; font-size: .74rem;
+             letter-spacing: .18em; text-transform: uppercase; color: var(--leaf); margin-bottom: 14px; }
+  .eyebrow::before { content: ""; width: 22px; height: 2px; background: currentColor; border-radius: 2px; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 var(--gutter); }
+  section { padding: clamp(64px, 10vw, 120px) 0; }
 
-  /* Blurred copy of the current photo behind everything */
-  .backdrop { position: fixed; inset: -60px; z-index: 0; background: center/cover no-repeat var(--stone);
-              filter: blur(38px) saturate(.8) brightness(.45); transform: scale(1.1);
-              transition: background-image .6s ease; }
-  .backdrop::after { content: ""; position: absolute; inset: 0;
-                     background: radial-gradient(ellipse at center, transparent 30%, rgba(10,9,8,.7) 100%); }
-  .page { position: relative; z-index: 1; min-height: 100%; display: flex; flex-direction: column; }
+  /* Buttons */
+  .btn { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; cursor: pointer; border: 0;
+         font-weight: 800; font-size: .95rem; padding: 14px 26px; border-radius: 999px; white-space: nowrap;
+         transition: transform .2s, background .2s, box-shadow .2s; }
+  .btn-sun { background: var(--sun); color: #2a2208; box-shadow: 0 8px 24px rgba(244,178,35,.35); }
+  .btn-sun:hover { background: var(--sun-hi); transform: translateY(-2px); }
+  .btn-ghost { background: rgba(255,253,248,.16); color: #fff; border: 1.5px solid rgba(255,255,255,.7);
+               backdrop-filter: blur(6px); }
+  .btn-ghost:hover { background: rgba(255,253,248,.28); }
+  .btn-line { background: none; color: var(--moss); border: 1.5px solid var(--sage); }
+  .btn-line:hover { background: var(--sage-soft); }
+  .heart { width: 18px; height: 18px; flex: 0 0 auto; }
 
   /* Top bar */
-  header { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
-           padding: 22px clamp(16px, 4vw, 48px); gap: 12px; }
-  .logo { font-family: "Cormorant Garamond", serif; font-size: 1.6rem; font-weight: 600;
-          text-decoration: none; color: var(--bone); white-space: nowrap; }
-  .views { display: flex; gap: 4px; background: rgba(55,55,51,.6); padding: 4px; border-radius: 8px; }
-  .views button { background: none; border: 0; padding: 6px 9px; border-radius: 6px; cursor: pointer;
-                  color: var(--ash); display: grid; place-items: center; }
-  .views button.on { background: var(--bone); color: var(--night); }
-  .donate-link { justify-self: end; text-decoration: none; font-weight: 700; font-size: .78rem;
-                 text-transform: uppercase; letter-spacing: .16em; color: var(--night);
-                 background: var(--ember); padding: 10px 18px; border-radius: 999px; transition: background .2s; }
-  .donate-link:hover { background: var(--ember-hi); }
-  .donate-link { white-space: nowrap; }
-  @media (max-width: 560px) {
-    header { padding: 16px; gap: 8px; }
-    .logo { font-size: 1.15rem; white-space: normal; line-height: 1.05; }
-    .views button { padding: 5px 6px; }
-    header .donate-link { padding: 8px 12px; letter-spacing: .06em; font-size: .7rem; }
+  header { position: fixed; top: 0; left: 0; right: 0; z-index: 20; display: flex; align-items: center; gap: 24px;
+           padding: 10px var(--gutter); transition: background .3s, box-shadow .3s; }
+  header.solid { background: rgba(247,243,234,.92); backdrop-filter: blur(10px); box-shadow: 0 1px 0 var(--line); }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; margin-right: auto; }
+  .brand img { width: 52px; height: 52px; border-radius: 50%; background: #fff; padding: 3px;
+               box-shadow: 0 2px 10px rgba(0,0,0,.12); }
+  .brand span { font-family: "Fraunces", serif; font-weight: 600; font-size: 1.2rem; color: #fff;
+                text-shadow: 0 1px 12px rgba(0,0,0,.35); transition: color .3s; }
+  header.solid .brand span { color: var(--moss); text-shadow: none; }
+  header nav { display: flex; gap: 22px; }
+  header nav a { text-decoration: none; font-weight: 700; font-size: .92rem; color: #fff;
+                 text-shadow: 0 1px 10px rgba(0,0,0,.35); }
+  header.solid nav a { color: var(--moss); text-shadow: none; }
+  header nav a:hover { text-decoration: underline; text-underline-offset: 5px; }
+  header .btn { padding: 10px 18px; font-size: .86rem; }
+  @media (max-width: 900px) { header nav { display: none; } }
+  @media (max-width: 480px) {
+    .brand span { display: none; }
+    .brand img { width: 44px; height: 44px; }
   }
 
-  /* Slider */
-  .stage { flex: 1; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
-  .viewport { overflow: hidden; padding: 8px 0; touch-action: pan-y; user-select: none; }
-  .track { display: flex; gap: var(--gap); transition: transform .7s cubic-bezier(.22,.8,.25,1); will-change: transform; }
-  .slide { flex: 0 0 var(--slide-w); height: var(--slide-h); position: relative; overflow: hidden;
-           background: var(--stone); cursor: pointer; opacity: .32; transition: opacity .7s; }
-  .slide.current { opacity: 1; cursor: default; box-shadow: 0 30px 80px rgba(0,0,0,.55); }
-  .slide img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
-  .slide .cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 40px 24px 18px;
-                background: linear-gradient(to top, rgba(15,14,12,.75), transparent);
-                font-size: .78rem; text-transform: uppercase; letter-spacing: .2em; color: var(--bone); }
+  /* Hero */
+  .hero { position: relative; min-height: min(100svh, 860px); display: flex; align-items: flex-end;
+          padding: 120px 0 clamp(48px, 8vw, 96px); color: #fff; overflow: hidden; }
+  .hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+              animation: drift 24s ease-out both; }
+  @keyframes drift { from { transform: scale(1.12); } to { transform: scale(1); } }
+  .hero::after { content: ""; position: absolute; inset: 0;
+                 background: linear-gradient(180deg, rgba(20,32,18,.45) 0%, rgba(20,32,18,0) 28%),
+                             linear-gradient(15deg, rgba(20,34,18,.86) 0%, rgba(20,34,18,.45) 45%, rgba(20,34,18,0) 75%); }
+  .hero .wrap { position: relative; z-index: 1; width: 100%; }
+  .hero .eyebrow { color: var(--sun-hi); }
+  .hero h1 { color: #fff; font-size: clamp(2.6rem, 7vw, 5.2rem); max-width: 13ch; }
+  .hero h1 em { font-style: italic; font-weight: 400; color: #e3f0cf; }
+  .hero p { font-size: clamp(1.05rem, 1.8vw, 1.3rem); max-width: 34ch; margin: 18px 0 30px; color: #eef3e6; }
+  .hero .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .artist { position: absolute; z-index: 1; right: var(--gutter); bottom: 18px; font-size: .74rem; font-weight: 700;
+            letter-spacing: .08em; color: rgba(255,255,255,.85); background: rgba(20,34,18,.45);
+            padding: 4px 12px; border-radius: 999px; backdrop-filter: blur(4px); }
 
-  /* First slide: the title card */
-  .cover { display: grid; place-items: center; text-align: center; }
-  .cover::before { content: ""; position: absolute; inset: 0; z-index: 1;
-                   background: radial-gradient(ellipse at center, rgba(20,19,17,.62) 0%, rgba(20,19,17,.38) 75%); }
-  .cover img { position: absolute; inset: 0; }
-  .cover .inner { position: relative; z-index: 2; padding: 24px; text-shadow: 0 2px 18px rgba(0,0,0,.45); }
-  .cover h1 { font-family: "Cormorant Garamond", serif; font-weight: 500; margin: 0;
-              font-size: clamp(2.6rem, 7vw, 5.6rem); line-height: 1; color: #f1ede6; }
-  .cover p { margin: 14px 0 26px; font-size: .78rem; text-transform: uppercase; letter-spacing: .26em; color: var(--bone); }
-  .cover .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-  .ghost { background: none; border: 1px solid rgba(213,209,200,.5); padding: 10px 18px; cursor: pointer;
-           font-size: .74rem; text-transform: uppercase; letter-spacing: .2em; text-decoration: none; border-radius: 999px; }
-  .ghost:hover { border-color: var(--bone); }
-  .cover .donate-link { justify-self: auto; }
+  /* Who we are */
+  .about { background: var(--paper); }
+  .about .wrap { display: grid; grid-template-columns: 1.15fr .85fr; gap: clamp(32px, 6vw, 80px); align-items: start; }
+  .about .text p { margin: 0 0 1.05em; }
+  .about blockquote { margin: 26px 0 30px; padding: 4px 0 4px 22px; border-left: 4px solid var(--lavender);
+                      font-family: "Fraunces", serif; font-style: italic; font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+                      line-height: 1.3; color: var(--lavender); }
+  .about strong { color: var(--moss); }
+  .about .call { font-family: "Fraunces", serif; font-size: 1.3rem; color: var(--moss); font-weight: 600; margin: 28px 0 22px; }
+  .about figure { margin: 0; position: sticky; top: 100px; }
+  .about figure img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--radius);
+                      box-shadow: 0 30px 60px -20px rgba(47,74,44,.35); display: block; }
+  .about figcaption { font-size: .85rem; color: var(--muted); margin-top: 10px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 18px; }
+  .chip { background: var(--sage-soft); color: var(--moss); font-weight: 700; font-size: .84rem;
+          padding: 6px 14px; border-radius: 999px; }
+  @media (max-width: 860px) {
+    .about .wrap { grid-template-columns: 1fr; }
+    .about figure { position: static; order: -1; }
+    .about figure img { aspect-ratio: 16 / 10; }
+  }
 
-  /* Progress dots and arrows */
-  .nav { display: flex; align-items: center; justify-content: center; gap: 18px; padding: 26px 16px 30px; }
-  .arrow { background: none; border: 1px solid rgba(213,209,200,.3); width: 38px; height: 38px; border-radius: 50%;
-           cursor: pointer; display: grid; place-items: center; color: var(--mist); }
-  .arrow:hover { border-color: var(--bone); color: var(--bone); }
-  .dots { display: flex; align-items: center; gap: 0; max-width: 50vw; }
-  .dots button { background: none; border: 0; padding: 8px 5px; cursor: pointer; }
-  .dots button span { display: block; width: 7px; height: 7px; border-radius: 50%; background: var(--ash); opacity: .5;
-                      transition: all .3s; }
-  .dots button.on span { width: 14px; height: 14px; opacity: 1; background: none; border: 2px solid var(--ember); }
-  .count { font-size: .74rem; letter-spacing: .2em; color: var(--mist); min-width: 64px; text-align: center; }
+  /* Section heads */
+  .head { display: flex; align-items: end; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 34px; }
+  .head p { margin: 10px 0 0; color: var(--muted); max-width: 52ch; }
+  .tag { display: inline-block; background: var(--lavender-soft); color: var(--lavender); font-weight: 800;
+         font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; padding: 4px 12px; border-radius: 999px;
+         vertical-align: middle; margin-left: 8px; font-family: "Nunito", sans-serif; }
 
-  /* Grid view */
-  .grid { display: none; columns: 4 240px; column-gap: 14px; padding: 8px clamp(16px, 4vw, 48px) 48px; }
-  .grid figure { margin: 0 0 14px; break-inside: avoid; cursor: zoom-in; overflow: hidden; background: var(--stone); }
-  .grid img { width: 100%; height: auto; display: block; transition: transform .5s, opacity .3s; opacity: .85; }
-  .grid figure:hover img { transform: scale(1.04); opacity: 1; }
-  body.grid-mode .grid { display: block; }
-  body.grid-mode .stage { display: none; }
+  /* Garden slider */
+  .garden { overflow: hidden; }
+  .views { display: flex; gap: 4px; background: var(--paper); border: 1px solid var(--line); padding: 4px; border-radius: 12px; }
+  .views button { background: none; border: 0; padding: 7px 10px; border-radius: 8px; cursor: pointer; color: var(--muted);
+                  display: grid; place-items: center; }
+  .views button.on { background: var(--moss); color: #fff; }
+  .viewport { overflow: hidden; padding: 6px 0 40px; touch-action: pan-y; user-select: none; }
+  .track { display: flex; gap: 24px; transition: transform .8s cubic-bezier(.22,.8,.25,1); will-change: transform; }
+  .slide { flex: 0 0 min(72vw, 1000px); margin: 0; cursor: pointer; opacity: .4; transform: scale(.94);
+           transition: opacity .8s, transform .8s; }
+  .slide.current { opacity: 1; transform: none; cursor: default; }
+  .slide img { width: 100%; aspect-ratio: 16 / 9; max-height: 64vh; object-fit: cover; display: block; border-radius: var(--radius);
+               pointer-events: none; background: var(--sage-soft); }
+  .slide.current img { box-shadow: 0 30px 60px -24px rgba(47,74,44,.45); }
+  .slide figcaption { font-family: "Fraunces", serif; font-size: 1.15rem; color: var(--moss); padding: 14px 4px 0;
+                      opacity: 0; transition: opacity .6s .2s; }
+  .slide.current figcaption { opacity: 1; }
+  @media (max-width: 760px) { .slide { flex-basis: 86vw; } .track { gap: 12px; } }
+  .nav { display: flex; align-items: center; justify-content: center; gap: 16px; }
+  .round { background: var(--paper); border: 1.5px solid var(--line); width: 46px; height: 46px; border-radius: 50%;
+           cursor: pointer; display: grid; place-items: center; color: var(--moss); transition: all .2s; flex: 0 0 auto; }
+  .round:hover { border-color: var(--leaf); background: var(--sage-soft); }
+  .dots { display: flex; align-items: center; flex-wrap: wrap; justify-content: center; }
+  .dots button { background: none; border: 0; padding: 8px 4px; cursor: pointer; }
+  .dots span { display: block; width: 8px; height: 8px; border-radius: 99px; background: var(--sage); transition: all .3s; }
+  .dots .on span { width: 26px; background: var(--leaf); }
+  .grid { display: none; columns: 3 280px; column-gap: 16px; }
+  .grid figure { margin: 0 0 16px; break-inside: avoid; cursor: zoom-in; border-radius: 14px; overflow: hidden;
+                 background: var(--sage-soft); position: relative; }
+  .grid img { width: 100%; height: auto; display: block; transition: transform .6s; }
+  .grid figure:hover img { transform: scale(1.04); }
+  .grid figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 30px 14px 10px; color: #fff; font-weight: 700;
+                     font-size: .88rem; background: linear-gradient(transparent, rgba(20,34,18,.75)); }
+  .garden.grid-mode .grid { display: block; }
+  .garden.grid-mode .slider { display: none; }
 
-  footer { text-align: center; padding: 0 16px 22px; font-size: .78rem; color: var(--ash); }
-  footer a { color: var(--mist); }
+  /* Timeline */
+  .story { background: var(--moss); color: #eef3e6; }
+  .story h2, .story .eyebrow { color: #fff; }
+  .story .eyebrow { color: var(--sun-hi); }
+  .story .head p { color: #c8d6bd; }
+  .stage { position: relative; aspect-ratio: 16 / 9; max-height: 60vh; width: 100%; border-radius: var(--radius); overflow: hidden; background: #22361f;
+           box-shadow: 0 40px 80px -30px rgba(0,0,0,.55); }
+  .frame { position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s ease; }
+  .frame.on { opacity: 1; z-index: 1; }
+  .frame .blur { position: absolute; inset: -40px; background: center / cover no-repeat; filter: blur(30px) brightness(.7); }
+  .frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .frame.wide img { object-fit: contain; }
+  .frame.on img { animation: kb 7s ease-out both; }
+  @keyframes kb { from { transform: scale(1); } to { transform: scale(1.07); } }
+  .frame .when { position: absolute; left: 18px; top: 16px; z-index: 2; background: rgba(255,253,248,.92); color: var(--moss);
+                 font-weight: 800; font-size: .8rem; letter-spacing: .06em; padding: 5px 12px; border-radius: 999px; }
+  .frame.future .when { background: var(--lavender); color: #fff; }
+  .story-cap { display: flex; align-items: baseline; gap: 18px; margin: 22px 0 26px; min-height: 3.4em; }
+  .story-cap .date { font-family: "Fraunces", serif; font-size: clamp(1.5rem, 3vw, 2.1rem); color: #fff; white-space: nowrap; }
+  .story-cap .what { color: #d7e3cb; flex: 1; }
+  .story-cap .what a { color: var(--sun-hi); font-weight: 700; }
+  .story-cap .n { color: #9fb48f; font-size: .85rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  @media (max-width: 640px) { .story-cap { flex-wrap: wrap; gap: 4px 14px; } .story-cap .what { flex-basis: 100%; order: 3; } }
+  .bar { display: flex; align-items: center; gap: 46px; padding-right: 30px; }
+  .play svg[hidden] { display: none; }
+  .play { background: var(--sun); color: #2a2208; border: 0; width: 52px; height: 52px; border-radius: 50%; cursor: pointer;
+          display: grid; place-items: center; flex: 0 0 auto; box-shadow: 0 6px 18px rgba(244,178,35,.35); }
+  .play:hover { background: var(--sun-hi); }
+  .rail { position: relative; flex: 1; height: 64px; cursor: pointer; touch-action: none; }
+  .rail .line { position: absolute; left: 0; right: 0; top: 14px; height: 4px; border-radius: 4px; background: rgba(255,255,255,.18); }
+  .rail .fill { position: absolute; left: 0; top: 14px; height: 4px; border-radius: 4px; background: var(--sun);
+                transition: width .5s ease; }
+  .rail .tick { position: absolute; top: 12px; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%;
+                background: rgba(255,255,255,.35); }
+  .rail .tick.done { background: var(--sun); }
+  .rail .stop { position: absolute; top: 6px; transform: translateX(-50%); display: flex; flex-direction: column;
+                align-items: center; gap: 8px; background: none; border: 0; padding: 0; cursor: pointer; }
+  .rail .stop i { width: 20px; height: 20px; border-radius: 50%; background: var(--moss); border: 3px solid rgba(255,255,255,.5);
+                  transition: all .3s; }
+  .rail .stop.done i { border-color: var(--sun); background: var(--sun); }
+  .rail .stop.future i { border-color: #c9bdf0; }
+  .rail .stop.future.done i { background: var(--lavender); border-color: #c9bdf0; }
+  .rail .stop b { font-size: .78rem; font-weight: 800; color: #cfdcc3; white-space: nowrap; letter-spacing: .02em; }
+  .rail .stop.here b { color: #fff; }
+  .rail .knob { position: absolute; top: 4px; width: 24px; height: 24px; margin-left: -12px; border-radius: 50%; background: #fff;
+                box-shadow: 0 2px 10px rgba(0,0,0,.35); transition: left .5s ease; pointer-events: none; z-index: 2; }
+  .rail.drag .knob, .rail.drag .fill { transition: none; }
+  .rail .stop b.mini { display: none; }
+  @media (max-width: 560px) { .rail .stop b { font-size: .68rem; } .rail .stop b.full { display: none; } .rail .stop b.mini { display: block; } .play { width: 44px; height: 44px; } .bar { gap: 32px; padding-right: 24px; } }
+
+  /* Before / after */
+  .compare { position: relative; aspect-ratio: 16 / 9; border-radius: var(--radius); overflow: hidden; user-select: none;
+             box-shadow: 0 30px 60px -24px rgba(47,74,44,.45); --pos: 50%; background: var(--sage-soft); }
+  .compare img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+  .compare .before { clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
+  .compare .handle { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 3px; margin-left: -1.5px; background: #fff;
+                     pointer-events: none; box-shadow: 0 0 12px rgba(0,0,0,.3); }
+  .compare .handle::after { content: "‹ ›"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                            width: 50px; height: 50px; border-radius: 50%; background: #fff; color: var(--moss);
+                            display: grid; place-items: center; font-weight: 800; font-size: 1.2rem; letter-spacing: 2px;
+                            box-shadow: 0 4px 16px rgba(0,0,0,.3); }
+  .compare .lbl { position: absolute; top: 16px; z-index: 1; font-weight: 800; font-size: .78rem; letter-spacing: .08em;
+                  text-transform: uppercase; padding: 5px 12px; border-radius: 999px; pointer-events: none; }
+  .compare .lbl.l { left: 16px; background: rgba(255,253,248,.92); color: var(--moss); }
+  .compare .lbl.r { right: 16px; background: var(--lavender); color: #fff; }
+  .compare input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; z-index: 2; }
+  .pairs { display: flex; gap: 12px; margin-top: 16px; overflow-x: auto; padding-bottom: 6px; }
+  .pairs button { flex: 0 0 auto; border: 2px solid transparent; border-radius: 12px; padding: 0; overflow: hidden;
+                  cursor: pointer; background: none; opacity: .65; transition: all .2s; }
+  .pairs button.on { border-color: var(--leaf); opacity: 1; }
+  .pairs img { display: block; width: 120px; aspect-ratio: 16 / 9; object-fit: cover; }
+  .pair-cap { font-family: "Fraunces", serif; font-size: 1.2rem; color: var(--moss); margin: 16px 0 0; }
+
+  /* Last call */
+  .give { background: linear-gradient(135deg, var(--lavender-soft), var(--sage-soft)); text-align: center; }
+  .give h2 { max-width: 20ch; margin: 0 auto 14px; }
+  .give p { max-width: 46ch; margin: 0 auto 30px; color: var(--muted); }
+  .give .leaf { width: 56px; height: 56px; color: var(--leaf); margin-bottom: 10px; }
+
+  footer { background: var(--moss); color: #c8d6bd; padding: 36px var(--gutter); font-size: .9rem; }
+  footer .wrap { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; padding: 0; }
+  footer img { width: 54px; height: 54px; border-radius: 50%; background: #fff; padding: 3px; }
+  footer a { color: #fff; font-weight: 700; }
+  footer .note { margin-left: auto; color: #9fb48f; font-size: .8rem; }
+
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity .9s ease, transform .9s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .reveal { opacity: 1; transform: none; }
+    html { scroll-behavior: auto; }
+  }
 </style>
 </head>
 <body>
-<div class="backdrop" id="backdrop"></div>
 
-<div class="page">
-  <header>
-    <a class="logo" href="./">un toit pour moi</a>
-    <div class="views" role="group" aria-label="Affichage">
-      <button id="v-grid" aria-label="Vue grille" title="Grille">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6"/><rect x="9" y="1" width="6" height="6"/><rect x="1" y="9" width="6" height="6"/><rect x="9" y="9" width="6" height="6"/></svg>
-      </button>
-      <button id="v-slide" class="on" aria-label="Vue diaporama" title="Diaporama">
-        <svg width="22" height="16" viewBox="0 0 22 16" fill="currentColor"><rect x="5" y="2" width="12" height="12"/><rect x="0" y="4" width="3" height="8" opacity=".5"/><rect x="19" y="4" width="3" height="8" opacity=".5"/></svg>
-      </button>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-heart" viewBox="0 0 24 24"><path fill="currentColor" d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.7 4.5c2.1 0 3.6 1.1 4.3 2.4.7-1.3 2.2-2.4 4.3-2.4 3.7 0 5.8 3.9 4.3 7.3C19.5 16.4 12 21 12 21z"/></symbol>
+  <symbol id="i-leaf" viewBox="0 0 64 64"><path fill="currentColor" d="M54 8C30 8 12 20 12 40c0 4 1 8 3 11l-5 5 3 3 5-5c3 2 7 3 11 3 20 0 25-25 25-49zM20 47c6-10 14-18 24-24-8 7-15 15-21 26z"/></symbol>
+</svg>
+
+<header id="top">
+  <a class="brand" href="#"><img src="images/logo.webp" alt="Logo Un Toit pour Moi" width="52" height="52"><span>Un Toit pour Moi</span></a>
+  <nav>
+    <a href="#association">Qui sommes-nous</a>
+    <a href="#jardin">Le jardin</a>
+    <a href="#histoire">Notre histoire</a>
+    <a href="#avant-apres" class="needs-compare" hidden>Avant / après</a>
+  </nav>
+  <a class="btn btn-sun donate" href="#" target="_blank" rel="noopener"><svg class="heart"><use href="#i-heart"/></svg>Faire un don</a>
+</header>
+
+<section class="hero">
+  <img class="hero-img" id="hero-img" src="images/jardin-01.webp" alt="Vue d'artiste du futur jardin thérapeutique">
+  <div class="wrap">
+    <div class="eyebrow">Projet de jardin thérapeutique</div>
+    <h1>Aidez-nous à faire <em>pousser</em> leur jardin</h1>
+    <p>Un jardin pensé pour les jeunes adultes de la MAS Un Toit pour Moi : sentir, toucher, écouter, profiter du soleil.</p>
+    <div class="actions">
+      <a class="btn btn-sun donate" href="#" target="_blank" rel="noopener"><svg class="heart"><use href="#i-heart"/></svg>Faire un don</a>
+      <a class="btn btn-ghost" href="#association">Découvrir le projet</a>
     </div>
-    <a class="donate-link" href="https://www.helloasso.com/associations/un-toit-pour-moi/formulaires/1" target="_blank" rel="noopener">Faire un don</a>
-  </header>
+  </div>
+  <span class="artist">Vue d'artiste du futur jardin</span>
+</section>
 
-  <main class="stage">
+<section class="about" id="association">
+  <div class="wrap">
+    <div class="text reveal">
+      <div class="eyebrow">Qui sommes-nous ?</div>
+      <h2>Une maison, et bientôt un jardin</h2>
+      <blockquote>Que deviendront nos enfants quand ils seront grands ?</blockquote>
+      <p>Tout est parti de cette inquiétude de parents. En 2005, nos jeunes, devenus adultes, restaient en établissement pour enfants,
+         faute de mieux. Ce n'était pas une vie pour eux, ni un avenir. Alors nous avons créé <strong>Un Toit pour Moi</strong>,
+         avec un rêve simple : leur offrir une vraie maison.</p>
+      <p>Ce rêve est devenu réalité : la <strong>MAS Un Toit pour Moi</strong> est aujourd'hui leur chez-eux.</p>
+      <p>Mais une maison, c'est aussi tous ces petits bonheurs qui font du bien :</p>
+      <div class="chips"><span class="chip">La douceur de la salle Snoezelen</span><span class="chip">La chaleur de la balnéothérapie</span><span class="chip">Un espace pour les familles</span></div>
+      <p>Aujourd'hui, nous rêvons de leur offrir <strong>un jardin</strong> : sentir le parfum de la lavande, toucher les feuilles,
+         écouter l'eau, profiter du soleil. Un jardin pensé pour eux, accessible à tous.</p>
+      <p class="call">Ce jardin, nous ne pourrons pas le créer seuls. Aidez-nous à le faire pousser. 🌿</p>
+      <a class="btn btn-sun donate" href="#" target="_blank" rel="noopener"><svg class="heart"><use href="#i-heart"/></svg>Je soutiens le jardin</a>
+    </div>
+    <figure class="reveal">
+      <img src="images/histoire-aujourdhui-01.webp" alt="L'entrée de la MAS Un Toit pour Moi" loading="lazy">
+      <figcaption>La MAS Un Toit pour Moi aujourd'hui</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="garden" id="jardin">
+  <div class="wrap">
+    <div class="head reveal">
+      <div>
+        <div class="eyebrow">Le futur jardin</div>
+        <h2>Promenade dans le projet <span class="tag">Vues d'artiste</span></h2>
+        <p>Des allées accessibles, des plantes à sentir et à toucher, de l'eau, de l'ombre : voici le jardin que nous voulons créer.</p>
+      </div>
+      <div class="views" role="group" aria-label="Affichage">
+        <button id="v-slide" class="on" aria-label="Diaporama" title="Diaporama">
+          <svg width="22" height="16" viewBox="0 0 22 16" fill="currentColor"><rect x="5" y="2" width="12" height="12" rx="2"/><rect x="0" y="4" width="3" height="8" rx="1" opacity=".5"/><rect x="19" y="4" width="3" height="8" rx="1" opacity=".5"/></svg>
+        </button>
+        <button id="v-grid" aria-label="Grille" title="Grille">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="slider">
     <div class="viewport" id="viewport"><div class="track" id="track"></div></div>
-    <nav class="nav">
-      <button class="arrow" id="prev" aria-label="Photo précédente">‹</button>
+    <div class="nav">
+      <button class="round" id="prev" aria-label="Image précédente">‹</button>
       <div class="dots" id="dots"></div>
-      <span class="count" id="count"></span>
-      <button class="arrow" id="next" aria-label="Photo suivante">›</button>
-    </nav>
-  </main>
+      <button class="round" id="next" aria-label="Image suivante">›</button>
+    </div>
+  </div>
+  <div class="wrap"><div class="grid" id="grid"></div></div>
+</section>
 
-  <section class="grid" id="grid"></section>
+<section class="story" id="histoire">
+  <div class="wrap">
+    <div class="head reveal">
+      <div>
+        <div class="eyebrow">Notre histoire</div>
+        <h2>Du premier coup de pelle au jardin de demain</h2>
+        <p>Appuyez sur lecture, ou faites glisser le curseur le long des dates.</p>
+      </div>
+    </div>
+    <div class="stage" id="stage"></div>
+    <div class="story-cap" aria-live="polite"><span class="date" id="s-date"></span><span class="what" id="s-what"></span><span class="n" id="s-n"></span></div>
+    <div class="bar">
+      <button class="play" id="play" aria-label="Lecture">
+        <svg id="i-play" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><path d="M4 2.5v13L15.5 9z"/></svg>
+        <svg id="i-pause" width="18" height="18" viewBox="0 0 18 18" fill="currentColor" hidden><rect x="3.5" y="2.5" width="4" height="13" rx="1"/><rect x="10.5" y="2.5" width="4" height="13" rx="1"/></svg>
+      </button>
+      <div class="rail" id="rail" role="slider" tabindex="0" aria-label="Chronologie"></div>
+    </div>
+  </div>
+</section>
 
-  <footer>
-    <a href="https://www.helloasso.com/associations/un-toit-pour-moi" target="_blank" rel="noopener">Découvrir l'association sur HelloAsso</a>
-  </footer>
-</div>
+<section id="avant-apres" hidden>
+  <div class="wrap">
+    <div class="head reveal">
+      <div>
+        <div class="eyebrow">Avant / après</div>
+        <h2>Aujourd'hui… et demain</h2>
+        <p>Faites glisser la poignée pour voir le même endroit aujourd'hui, puis tel que nous l'imaginons.</p>
+      </div>
+    </div>
+    <div class="compare" id="compare">
+      <img class="after" alt=""><img class="before" alt="">
+      <span class="lbl l">Aujourd'hui</span><span class="lbl r">Demain</span>
+      <div class="handle"></div>
+      <input type="range" min="0" max="100" value="50" step="0.5" aria-label="Comparer aujourd'hui et demain">
+    </div>
+    <p class="pair-cap" id="pair-cap"></p>
+    <div class="pairs" id="pairs"></div>
+  </div>
+</section>
+
+<section class="give" id="don">
+  <div class="wrap reveal">
+    <svg class="leaf"><use href="#i-leaf"/></svg>
+    <h2>Chaque don fait pousser une plante, une allée, un sourire</h2>
+    <p>Les dons passent par HelloAsso, une plateforme sécurisée et gratuite pour les associations : 100 % de votre don revient à l'association.</p>
+    <a class="btn btn-sun donate" href="#" target="_blank" rel="noopener"><svg class="heart"><use href="#i-heart"/></svg>Faire un don sur HelloAsso</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <img src="images/logo.webp" alt="" width="54" height="54">
+    <div>Association Un Toit pour Moi<br>
+      <a id="asso-link" href="#" target="_blank" rel="noopener">Découvrir l'association sur HelloAsso</a></div>
+    <span class="note">Les images du jardin sont des vues d'artiste du projet.</span>
+  </div>
+</footer>
 
 <script>
 const DONATE = "https://www.helloasso.com/associations/un-toit-pour-moi/formulaires/1";
+const ASSO = "https://www.helloasso.com/associations/un-toit-pour-moi";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const $ = id => document.getElementById(id);
+const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const getJSON = url => fetch(url, { cache: "no-cache" }).then(r => r.ok ? r.json() : []).catch(() => []);
 
-const track = document.getElementById("track");
-const dotsEl = document.getElementById("dots");
-const backdrop = document.getElementById("backdrop");
-let slides = [];   // [{src, caption}] where index 0 is the title card
-let current = 0;
+document.querySelectorAll(".donate").forEach(a => a.href = DONATE);
+$("asso-link").href = ASSO;
 
-fetch("content/photos.json", { cache: "no-cache" })
-  .then(r => r.json())
-  .catch(() => [])
-  .then(build);
+// Header turns solid once we leave the hero.
+const header = $("top");
+const onScroll = () => header.classList.toggle("solid", scrollY > document.querySelector(".hero").offsetHeight - 90);
+addEventListener("scroll", onScroll, { passive: true }); onScroll();
 
-function build(photos) {
-  photos = (photos || []).filter(p => p.src);
-  // The first photo is the backdrop of the title card; the others follow as slides.
-  const cover = photos[0];
-  slides = [{ cover: true, src: cover?.src }].concat(photos.slice(1));
+// Fade sections in as they arrive.
+const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }),
+                                    { threshold: .15 });
+document.querySelectorAll(".reveal").forEach(el => io.observe(el));
 
-  track.innerHTML = slides.map((s, i) => s.cover
-    ? `<div class="slide cover current" data-i="0">
-         ${s.src ? `<img src="${esc(s.src)}" alt="">` : ""}
-         <div class="inner">
-           <h1>Un toit pour moi</h1>
-           <p>La galerie du projet</p>
-           <div class="actions">
-             <a class="donate-link" href="${DONATE}" target="_blank" rel="noopener">Faire un don</a>
-             ${slides.length > 1 ? `<button class="ghost" data-go="1">Voir la galerie</button>` : ""}
-           </div>
-         </div>
-       </div>`
-    : `<div class="slide" data-i="${i}">
-         <img src="${esc(s.src)}" alt="${esc(s.caption)}" ${i > 2 ? 'loading="lazy"' : ""}>
-         ${s.caption ? `<div class="cap">${esc(s.caption)}</div>` : ""}
-       </div>`).join("");
+Promise.all([getJSON("content/photos.json"), getJSON("content/timeline.json"), getJSON("content/compare.json")])
+  .then(([photos, timeline, compare]) => {
+    photos = photos.filter(p => p.src);
+    if (photos[0]) $("hero-img").src = photos[0].src;
+    buildGarden(photos);
+    buildCompare(compare.filter(p => p.before && p.after));   // before the timeline, which links to it
+    buildStory(timeline.filter(p => p.src), photos);
+  });
 
-  dotsEl.innerHTML = slides.map((_, i) => `<button data-i="${i}" aria-label="Photo ${i + 1}"><span></span></button>`).join("");
-
-  document.getElementById("grid").innerHTML = photos.map((p, i) =>
-    `<figure data-i="${i}"><img src="${esc(p.src)}" alt="${esc(p.caption)}" loading="lazy"
-       ${p.w ? `width="${p.w}" height="${p.h}"` : ""}></figure>`).join("");
-
-  document.querySelector(".nav").style.visibility = slides.length > 1 ? "" : "hidden";
+// ---------- garden slider ----------
+let slides = [], current = 0;
+function buildGarden(photos) {
+  slides = photos;
+  $("track").innerHTML = photos.map((p, i) =>
+    `<figure class="slide" data-i="${i}"><img src="${esc(p.src)}" alt="${esc(p.caption)}" ${i > 1 ? 'loading="lazy"' : ""}>
+       <figcaption>${esc(p.caption)}</figcaption></figure>`).join("");
+  $("dots").innerHTML = photos.map((_, i) => `<button data-i="${i}" aria-label="Image ${i + 1}"><span></span></button>`).join("");
+  $("grid").innerHTML = photos.map((p, i) =>
+    `<figure data-i="${i}"><img src="${esc(p.src)}" alt="${esc(p.caption)}" loading="lazy" ${p.w ? `width="${p.w}" height="${p.h}"` : ""}>
+       ${p.caption ? `<figcaption>${esc(p.caption)}</figcaption>` : ""}</figure>`).join("");
   go(0);
 }
-
 function go(i) {
   current = Math.max(0, Math.min(slides.length - 1, i));
-  const el = track.children[current];
+  const el = $("track").children[current];
   if (!el) return;
-  // Centre the current slide inside the viewport.
-  const offset = el.offsetLeft - (track.parentElement.clientWidth - el.offsetWidth) / 2;
-  track.style.transform = `translateX(${-offset}px)`;
-  [...track.children].forEach((s, n) => s.classList.toggle("current", n === current));
-  [...dotsEl.children].forEach((d, n) => d.classList.toggle("on", n === current));
-  document.getElementById("count").textContent =
-    String(current + 1).padStart(2, "0") + " / " + String(slides.length).padStart(2, "0");
-  const src = slides[current].src;
-  backdrop.style.backgroundImage = src ? `url("${src}")` : "";
+  const offset = el.offsetLeft - ($("viewport").clientWidth - el.offsetWidth) / 2;
+  $("track").style.transform = `translateX(${-offset}px)`;
+  [...$("track").children].forEach((s, n) => s.classList.toggle("current", n === current));
+  [...$("dots").children].forEach((d, n) => d.classList.toggle("on", n === current));
 }
-
-track.addEventListener("click", e => {
-  const b = e.target.closest("[data-go]");
-  if (b) return go(+b.dataset.go);
-  const s = e.target.closest(".slide");
-  if (s && +s.dataset.i !== current) go(+s.dataset.i);
-});
-dotsEl.addEventListener("click", e => { const b = e.target.closest("button"); if (b) go(+b.dataset.i); });
-document.getElementById("prev").onclick = () => go(current - 1);
-document.getElementById("next").onclick = () => go(current + 1);
-document.addEventListener("keydown", e => {
-  if (document.body.classList.contains("grid-mode")) return;
-  if (e.key === "ArrowLeft") go(current - 1);
-  if (e.key === "ArrowRight") go(current + 1);
-});
-window.addEventListener("resize", () => go(current));
-
-// Swipe on phones
+$("track").addEventListener("click", e => { const s = e.target.closest(".slide"); if (s) go(+s.dataset.i); });
+$("dots").addEventListener("click", e => { const b = e.target.closest("button"); if (b) go(+b.dataset.i); });
+$("prev").onclick = () => go(current - 1);
+$("next").onclick = () => go(current + 1);
+addEventListener("resize", () => go(current));
 let x0 = null;
-const vp = document.getElementById("viewport");
-vp.addEventListener("touchstart", e => { x0 = e.touches[0].clientX; }, { passive: true });
-vp.addEventListener("touchend", e => {
+$("viewport").addEventListener("touchstart", e => { x0 = e.touches[0].clientX; }, { passive: true });
+$("viewport").addEventListener("touchend", e => {
   if (x0 === null) return;
   const dx = e.changedTouches[0].clientX - x0;
   if (Math.abs(dx) > 40) go(current + (dx < 0 ? 1 : -1));
   x0 = null;
 });
-
-// Grid / slider toggle
+// Arrow keys move the slider while it is on screen.
+let gardenVisible = false;
+new IntersectionObserver(([e]) => gardenVisible = e.isIntersecting, { threshold: .5 }).observe($("viewport"));
+addEventListener("keydown", e => {
+  if (!gardenVisible || $("jardin").classList.contains("grid-mode") || e.target.closest("input, .rail")) return;
+  if (e.key === "ArrowLeft") go(current - 1);
+  if (e.key === "ArrowRight") go(current + 1);
+});
 const setMode = grid => {
-  document.body.classList.toggle("grid-mode", grid);
-  document.getElementById("v-grid").classList.toggle("on", grid);
-  document.getElementById("v-slide").classList.toggle("on", !grid);
+  $("jardin").classList.toggle("grid-mode", grid);
+  $("v-grid").classList.toggle("on", grid);
+  $("v-slide").classList.toggle("on", !grid);
   if (!grid) requestAnimationFrame(() => go(current));
 };
-document.getElementById("v-grid").onclick = () => setMode(true);
-document.getElementById("v-slide").onclick = () => setMode(false);
-document.getElementById("grid").addEventListener("click", e => {
-  const f = e.target.closest("figure");
-  if (!f) return;
-  current = +f.dataset.i;   // photo i is slide i (photo 0 is the title card)
-  setMode(false);
+$("v-grid").onclick = () => setMode(true);
+$("v-slide").onclick = () => setMode(false);
+$("grid").addEventListener("click", e => { const f = e.target.closest("figure"); if (f) { current = +f.dataset.i; setMode(false); } });
+
+// ---------- timeline ----------
+// timeline.json: [{src, caption, date: "YYYY-MM" or "" for today}]. The garden renders close it as "Demain".
+let frames = [], stops = [], at = 0, timer = null;
+const monthLabel = (d, style, year = "numeric") => {
+  if (!d) return year === "numeric" ? "Aujourd'hui" : "Auj.";
+  const [y, m] = d.split("-").map(Number);
+  const s = new Date(y, (m || 1) - 1, 1).toLocaleDateString("fr-FR", { month: style, year });
+  return s[0].toUpperCase() + s.slice(1);
+};
+function buildStory(timeline, photos) {
+  const sorted = timeline.map((p, i) => ({ ...p, i }))
+    .sort((a, b) => ((a.date || "9999") < (b.date || "9999") ? -1 : (a.date || "9999") > (b.date || "9999") ? 1 : a.i - b.i));
+  frames = sorted.map(p => ({ ...p, label: monthLabel(p.date, "long"), short: monthLabel(p.date, "short"), mini: monthLabel(p.date, "short", "2-digit"), key: p.date || "today" }));
+  frames.push(...photos.slice(0, 4).map(p => ({ ...p, label: "Demain", short: "Demain", mini: "Demain", key: "future", future: true,
+                                                 caption: "Vue d'artiste · " + (p.caption || "le futur jardin") })));
+  if (!frames.length) { $("histoire").hidden = true; return; }
+  stops = [];
+  frames.forEach((f, i) => { if (!stops.length || stops.at(-1).key !== f.key) stops.push({ key: f.key, short: f.short, mini: f.mini, i, future: f.future }); });
+
+  $("stage").innerHTML = frames.map((f, i) => {
+    const wide = f.w && f.h && f.w / f.h > 2.1;
+    return `<div class="frame ${wide ? "wide" : ""} ${f.future ? "future" : ""}">
+      ${wide ? `<div class="blur" style="background-image:url('${esc(f.src)}')"></div>` : ""}
+      <img src="${esc(f.src)}" alt="${esc(f.caption)}" loading="lazy"><span class="when">${esc(f.label)}</span></div>`;
+  }).join("");
+  const pct = i => frames.length > 1 ? (i / (frames.length - 1)) * 100 : 0;
+  $("rail").innerHTML = `<div class="line"></div><div class="fill"></div>` +
+    frames.map((_, i) => `<span class="tick" style="left:${pct(i)}%"></span>`).join("") +
+    stops.map(s => `<button class="stop ${s.future ? "future" : ""}" data-i="${s.i}" style="left:${pct(s.i)}%"><i></i><b class="full">${esc(s.short)}</b><b class="mini">${esc(s.mini)}</b></button>`).join("") +
+    `<span class="knob"></span>`;
+  $("rail").setAttribute("aria-valuemin", 1);
+  $("rail").setAttribute("aria-valuemax", frames.length);
+  show(0);
+}
+function show(i) {
+  at = Math.max(0, Math.min(frames.length - 1, i));
+  const f = frames[at];
+  [...$("stage").children].forEach((el, n) => el.classList.toggle("on", n === at));
+  const p = frames.length > 1 ? at / (frames.length - 1) * 100 : 0;
+  $("rail").querySelector(".fill").style.width = p + "%";
+  $("rail").querySelector(".knob").style.left = p + "%";
+  $("rail").querySelectorAll(".tick").forEach((t, n) => t.classList.toggle("done", n <= at));
+  const here = stops.filter(s => s.i <= at).at(-1);
+  $("rail").querySelectorAll(".stop").forEach(b => {
+    b.classList.toggle("done", +b.dataset.i <= at);
+    b.classList.toggle("here", +b.dataset.i === here.i);
+  });
+  $("rail").setAttribute("aria-valuenow", at + 1);
+  $("rail").setAttribute("aria-valuetext", `${f.label} : ${f.caption || ""}`);
+  $("s-date").textContent = f.label;
+  const more = at === frames.length - 1
+    ? (hasCompare ? ` <a href="#avant-apres">Voir l'avant / après ↓</a>` : ` <a href="#jardin">Voir tout le jardin ↑</a>`) : "";
+  $("s-what").innerHTML = esc(f.caption) + more;
+  $("s-n").textContent = `${at + 1} / ${frames.length}`;
+}
+function play(on) {
+  clearInterval(timer); timer = null;
+  if (on) {
+    if (at >= frames.length - 1) show(0);
+    timer = setInterval(() => { if (at >= frames.length - 1) return play(false); show(at + 1); }, 3800);
+  }
+  $("i-play").hidden = !!on;
+  $("i-pause").hidden = !on;
+  $("play").setAttribute("aria-label", on ? "Pause" : "Lecture");
+}
+$("play").onclick = () => play(!timer);
+// Click or drag along the rail.
+const railIndex = e => {
+  const r = $("rail").getBoundingClientRect();
+  return Math.round(Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)) * (frames.length - 1));
+};
+$("rail").addEventListener("pointerdown", e => {
+  play(false);
+  $("rail").setPointerCapture(e.pointerId);
+  $("rail").classList.add("drag");
+  show(railIndex(e));
 });
+$("rail").addEventListener("pointermove", e => { if ($("rail").hasPointerCapture(e.pointerId)) { const i = railIndex(e); if (i !== at) show(i); } });
+$("rail").addEventListener("pointerup", () => $("rail").classList.remove("drag"));
+$("rail").addEventListener("keydown", e => {
+  if (e.key === "ArrowLeft" || e.key === "ArrowRight") { e.preventDefault(); play(false); show(at + (e.key === "ArrowRight" ? 1 : -1)); }
+});
+// Start the film once, the first time the section is on screen.
+new IntersectionObserver(([e], obs) => {
+  if (e.isIntersecting && frames.length > 1) { obs.disconnect(); if (!calm) play(true); }
+}, { threshold: .55 }).observe($("stage"));
+
+// ---------- before / after ----------
+// compare.json: [{before, after, caption}], before = photo today, after = render of the same spot.
+let hasCompare = false;
+function buildCompare(pairs) {
+  if (!pairs.length) return;
+  hasCompare = true;
+  $("avant-apres").hidden = false;
+  document.querySelectorAll(".needs-compare").forEach(a => a.hidden = false);
+  const box = $("compare"), range = box.querySelector("input");
+  const set = v => { box.style.setProperty("--pos", v + "%"); range.value = v; };
+  const pick = n => {
+    const p = pairs[n];
+    box.querySelector(".before").src = p.before;
+    box.querySelector(".after").src = p.after;
+    box.querySelector(".before").alt = "Aujourd'hui : " + (p.caption || "");
+    box.querySelector(".after").alt = "Demain (vue d'artiste) : " + (p.caption || "");
+    $("pair-cap").textContent = p.caption || "";
+    [...$("pairs").children].forEach((b, k) => b.classList.toggle("on", k === n));
+    set(50);
+  };
+  range.addEventListener("input", () => set(range.value));
+  $("pairs").innerHTML = pairs.length > 1
+    ? pairs.map((p, n) => `<button data-n="${n}" aria-label="${esc(p.caption || "Comparaison " + (n + 1))}"><img src="${esc(p.after)}" alt="" loading="lazy"></button>`).join("") : "";
+  $("pairs").addEventListener("click", e => { const b = e.target.closest("button"); if (b) pick(+b.dataset.n); });
+  pick(0);
+  // A small sweep the first time, to show the handle can be moved.
+  new IntersectionObserver(([e], obs) => {
+    if (!e.isIntersecting || calm) return;
+    obs.disconnect();
+    const keys = [[0, 50], [700, 18], [1500, 82], [2200, 50]];
+    const t0 = performance.now();
+    const step = t => {
+      const dt = t - t0;
+      const k = keys.findIndex(([tk]) => tk > dt);
+      if (k === -1) return set(50);
+      const [ta, va] = keys[k - 1], [tb, vb] = keys[k];
+      const u = (dt - ta) / (tb - ta), ease = u < .5 ? 2 * u * u : 1 - (-2 * u + 2) ** 2 / 2;
+      set(va + (vb - va) * ease);
+      requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, { threshold: .6 }).observe(box);
+}
 </script>
 </body>
 </html>
