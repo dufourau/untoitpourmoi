@@ -515,9 +515,9 @@ const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting
                                     { threshold: .15 });
 document.querySelectorAll(".reveal").forEach(el => io.observe(el));
 
-// Donation progress (content/goal.json: {collected, goal, updated}); hidden while there is no goal.
+// Donation progress (content/goal.json: {collected, goal, updated}); hidden until both numbers are filled in.
 fetch("content/goal.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null).catch(() => null).then(g => {
-  if (!g || !(g.goal > 0)) return;
+  if (!g || !(g.goal > 0) || !(g.collected > 0)) return;
   const eur = n => Math.round(n).toLocaleString("fr-FR") + " €";
   $("goal-in").textContent = eur(g.collected || 0);
   $("goal-of").textContent = eur(g.goal);
