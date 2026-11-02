@@ -121,27 +121,28 @@
 
   /* Who we are: a bento grid that fits one screen on a computer */
   .about { background: var(--cream); }
-  .bento { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); grid-template-areas: "intro photo" "garden plus";
-           gap: 14px; }
+  .bento { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 14px; }
+  .bento .col { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  .bento .t-intro, .bento .t-photo { flex: 1; }
   .tile { background: var(--paper); border-radius: var(--radius); padding: clamp(18px, 2.2vw, 28px); border: 1px solid rgba(19,40,28,.06); margin: 0; }
   .tile p { margin: 0 0 .6em; }
   .tile p:last-child { margin-bottom: 0; }
-  .t-intro { grid-area: intro; font-size: .97rem; line-height: 1.58; }
+  .t-intro { font-size: .97rem; line-height: 1.58; }
   .t-intro h2 { font-size: clamp(1.7rem, 2.9vw, 2.35rem); margin-bottom: 10px; }
   .t-intro .eyebrow { margin-bottom: 10px; }
   .t-intro blockquote { margin: 0 0 14px; font-family: "Fraunces", Georgia, serif; font-style: italic; color: var(--lavender);
                         font-size: clamp(1.1rem, 1.7vw, 1.3rem); line-height: 1.3; }
   .tile strong { color: var(--moss); }
-  .t-photo { grid-area: photo; padding: 0; overflow: hidden; position: relative; min-height: 240px; }
+  .t-photo { padding: 0; overflow: hidden; position: relative; min-height: 170px; }
   .t-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .t-photo span { position: absolute; left: 14px; bottom: 14px; background: rgba(251,249,243,.92); color: var(--moss);
                   font-size: .78rem; font-weight: 700; padding: 5px 12px; border-radius: 999px; }
-  .plus { grid-area: plus; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .plus { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
   .t-plus { display: flex; flex-direction: column; gap: 10px; justify-content: space-between; font-weight: 700;
             font-size: .86rem; line-height: 1.3; color: var(--moss); background: var(--sage-soft); border: 0; padding: 14px; }
   .t-plus svg { width: 28px; height: 28px; color: var(--leaf); }
   .t-plus:nth-child(2) { background: var(--lavender-soft); } .t-plus:nth-child(2) svg { color: var(--lavender); }
-  .t-garden { grid-area: garden; background: var(--forest); color: #e6eedf; border: 0; display: flex; flex-direction: column; font-size: .95rem;
+  .t-garden { background: var(--forest); color: #e6eedf; border: 0; display: flex; flex-direction: column; font-size: .95rem;
               justify-content: space-between; gap: 12px; }
   .t-garden strong { color: #fff; }
   .t-garden .call { font-weight: 800; color: #fff; font-size: 1.05rem; letter-spacing: -.01em; flex: 1 1 260px; }
@@ -152,7 +153,9 @@
   }
   @media (min-width: 861px) and (max-height: 780px) { .t-intro { font-size: .94rem; } .tile { padding: 16px 20px; } }
   @media (max-width: 860px) {
-    .bento { grid-template-columns: minmax(0, 1fr); grid-template-areas: "photo" "intro" "plus" "garden"; gap: 10px; }
+    .bento { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+    .bento .col { display: contents; }
+    .t-photo { order: -1; }
     .t-photo { aspect-ratio: 16 / 10; min-height: 0; }
     .plus { gap: 10px; }
     .t-plus { font-size: .84rem; padding: 12px; }
@@ -161,6 +164,10 @@
   /* Section heads */
   .head { display: flex; align-items: end; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; }
   .head p { margin: 12px 0 0; color: var(--muted); max-width: 60ch; }
+  .head .side-text { margin: 0; flex: 0 1 400px; font-size: .92rem; line-height: 1.55; }
+  .garden .head { flex-wrap: nowrap; align-items: flex-end; gap: 40px; }
+  .garden h2 { font-size: clamp(2rem, 3.6vw, 2.8rem); }
+  @media (max-width: 900px) { .garden .head { flex-wrap: wrap; gap: 14px; } .head .side-text { flex-basis: 100%; } }
   .tag { display: inline-block; background: var(--lavender-soft); color: var(--lavender); font-weight: 800;
          font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; padding: 4px 12px; border-radius: 999px;
          vertical-align: middle; margin-left: 8px; letter-spacing: .08em; }
@@ -174,7 +181,7 @@
   .garden .tag { background: rgba(201,189,240,.16); color: var(--lavender-hi); }
   .viewport { overflow: hidden; padding: 6px 0 40px; touch-action: pan-y; user-select: none; }
   .track { display: flex; align-items: center; gap: 24px; transition: transform .8s cubic-bezier(.22,.8,.25,1); will-change: transform; }
-  .slide { flex: 0 0 min(72vw, 1000px, (100svh - 490px) * 16 / 9); margin: 0; cursor: pointer; opacity: .4; transform: scale(.94);
+  .slide { flex: 0 0 min(72vw, 1000px, (100svh - 420px) * 16 / 9); margin: 0; cursor: pointer; opacity: .4; transform: scale(.94);
            transition: opacity .8s, transform .8s; }
   .slide.current { opacity: 1; transform: none; cursor: zoom-in; }
   .stage { cursor: zoom-in; }
@@ -209,7 +216,7 @@
                       opacity: 0; transition: opacity .6s .2s; }
   .slide.current figcaption { opacity: 1; }
   @media (max-width: 760px) { .slide { flex-basis: 86vw; } .track { gap: 12px; } }
-  .nav { display: flex; align-items: center; justify-content: center; gap: 16px; }
+  .nav { display: flex; align-items: center; justify-content: flex-start; gap: 16px; max-width: 1180px; margin: 0 auto; padding: 0 var(--gutter); }
   .round { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.18); width: 46px; height: 46px; border-radius: 12px;
            cursor: pointer; display: grid; place-items: center; color: #fff; transition: all .2s; flex: 0 0 auto; }
   .round:hover { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.35); }
@@ -389,6 +396,7 @@
 
 <section class="about" id="association">
   <div class="wrap bento">
+    <div class="col">
     <div class="tile t-intro reveal">
       <div class="eyebrow">Qui sommes-nous ?</div>
       <h2>Une maison, et bientôt <em>un jardin</em></h2>
@@ -399,15 +407,17 @@
       <p>Ce rêve est devenu réalité : la <strong>MAS Un Toit pour Moi</strong> est aujourd'hui leur chez-eux.</p>
       <p>Mais une maison, c'est aussi tous ces petits bonheurs qui font du bien :</p>
     </div>
-    <figure class="tile t-photo reveal">
-      <img src="images/histoire-aujourdhui-01.webp" alt="L'entrée de la MAS Un Toit pour Moi">
-      <span>La MAS Un Toit pour Moi aujourd'hui</span>
-    </figure>
     <div class="plus reveal">
     <div class="tile t-plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>La douceur de la salle Snoezelen</div>
     <div class="tile t-plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 15c2 0 2-1.5 4-1.5S8 15 10 15s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5M2 19.5c2 0 2-1.5 4-1.5s2 1.5 4 1.5 2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5M8 11V5a2 2 0 0 1 4 0M16 11V5a2 2 0 0 0-4 0"/></svg>La chaleur de la balnéothérapie</div>
     <div class="tile t-plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M12 18s-3-1.8-3-3.7A1.6 1.6 0 0 1 12 13a1.6 1.6 0 0 1 3 1.3c0 1.9-3 3.7-3 3.7z"/></svg>Un espace pour les familles</div>
     </div>
+    </div>
+    <div class="col">
+    <figure class="tile t-photo reveal">
+      <img src="images/histoire-aujourdhui-01.webp" alt="L'entrée de la MAS Un Toit pour Moi">
+      <span>La MAS Un Toit pour Moi aujourd'hui</span>
+    </figure>
     <div class="tile t-garden reveal">
       <p>Aujourd'hui, nous rêvons de leur offrir <strong>un jardin</strong> : sentir le parfum de la lavande, toucher les feuilles,
          écouter l'eau, profiter du soleil. Un jardin pensé pour eux, accessible à tous.</p>
@@ -415,6 +425,7 @@
         <p class="call">Ce jardin, nous ne pourrons pas le créer seuls. Aidez-nous à le faire pousser. 🌿</p>
         <a class="btn btn-sun donate" href="#" target="_blank" rel="noopener"><svg class="heart"><use href="#i-heart"/></svg>Je soutiens le jardin</a>
       </div>
+    </div>
     </div>
   </div>
 </section>
@@ -425,10 +436,10 @@
       <div>
         <div class="eyebrow">Le futur jardin</div>
         <h2>Promenade dans le projet <span class="tag">Vues d'artiste</span></h2>
-        <p>Des allées accessibles, des plantes à sentir et à toucher, de l'eau, de l'ombre : voici le jardin que nous voulons créer.
+      </div>
+      <p class="side-text">Des allées accessibles, des plantes à sentir et à toucher, de l'eau, de l'ombre : voici le jardin que nous voulons créer.
            Au bout de la promenade, comparez avec les lieux tels qu'ils sont aujourd'hui : les arbres existants sont conservés,
            le jardin se construit autour d'eux. Cliquez sur une image pour l'agrandir.</p>
-      </div>
     </div>
   </div>
   <div class="slider">
@@ -565,7 +576,9 @@ function go(i) {
   current = Math.max(0, Math.min(slides.length - 1, i));
   const el = $("track").children[current];
   if (!el) return;
-  const offset = el.offsetLeft - ($("viewport").clientWidth - el.offsetWidth) / 2;
+  // the current picture lines up with the left edge of the section's text
+  const left = document.querySelector("#jardin .head").getBoundingClientRect().left - $("viewport").getBoundingClientRect().left;
+  const offset = el.offsetLeft - left;
   $("track").style.transform = `translateX(${-offset}px)`;
   [...$("track").children].forEach((s, n) => {
     s.classList.toggle("current", n === current);
