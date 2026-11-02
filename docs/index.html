@@ -85,18 +85,30 @@
   /* Hero */
   .hero { position: relative; min-height: min(100svh, 860px); display: flex; align-items: flex-end;
           padding: 120px 0 clamp(48px, 8vw, 96px); color: #fff; overflow: hidden; }
+  /* The photo sits back as a softened background; the text lives on a frosted-glass card. */
   .hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-              animation: drift 24s ease-out both; }
+              filter: brightness(.86) saturate(1.05); animation: drift 24s ease-out both; }
   @keyframes drift { from { transform: scale(1.12); } to { transform: scale(1); } }
   .hero::after { content: ""; position: absolute; inset: 0;
-                 background: linear-gradient(180deg, rgba(20,32,18,.45) 0%, rgba(20,32,18,0) 28%),
-                             linear-gradient(15deg, rgba(20,34,18,.86) 0%, rgba(20,34,18,.45) 45%, rgba(20,34,18,0) 75%); }
+                 background: linear-gradient(180deg, rgba(16,28,14,.5) 0%, rgba(16,28,14,0) 22%),
+                             linear-gradient(20deg, rgba(16,28,14,.7) 0%, rgba(16,28,14,.25) 50%, rgba(16,28,14,.05) 80%); }
   .hero .wrap { position: relative; z-index: 1; width: 100%; }
+  .hero .card { max-width: 640px; padding: clamp(24px, 3.4vw, 44px); border-radius: 28px;
+                background: linear-gradient(135deg, rgba(20,36,18,.62), rgba(20,36,18,.34));
+                -webkit-backdrop-filter: blur(16px) saturate(1.15); backdrop-filter: blur(16px) saturate(1.15);
+                border: 1px solid rgba(255,255,255,.2); box-shadow: 0 30px 80px -24px rgba(0,0,0,.55);
+                animation: rise 1s .2s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
   .hero .eyebrow { color: var(--sun-hi); }
-  .hero h1 { color: #fff; font-size: clamp(2.6rem, 7vw, 5.2rem); max-width: 13ch; }
-  .hero h1 em { font-style: italic; font-weight: 400; color: #e3f0cf; }
-  .hero p { font-size: clamp(1.05rem, 1.8vw, 1.3rem); max-width: 34ch; margin: 18px 0 30px; color: #eef3e6; }
+  .hero h1 { color: #fff; font-size: clamp(2.3rem, 5.4vw, 4.3rem); max-width: 13ch; text-shadow: 0 2px 24px rgba(0,0,0,.25); }
+  .hero h1 em { font-style: italic; font-weight: 400; color: #d9efc0; }
+  .hero p { font-size: clamp(1.05rem, 1.6vw, 1.22rem); max-width: 36ch; margin: 16px 0 26px; color: #f2f6ec; line-height: 1.55; }
   .hero .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  @media (max-width: 560px) {
+    .hero { padding-bottom: 56px; }
+    .hero .card { border-radius: 22px; padding: 22px 20px; }
+    .hero .btn { padding: 12px 20px; }
+  }
   .artist { position: absolute; z-index: 1; right: var(--gutter); bottom: 18px; font-size: .74rem; font-weight: 700;
             letter-spacing: .08em; color: rgba(255,255,255,.85); background: rgba(20,34,18,.45);
             padding: 4px 12px; border-radius: 999px; backdrop-filter: blur(4px); }
@@ -324,7 +336,7 @@
 
 <section class="hero">
   <img class="hero-img" id="hero-img" src="images/jardin-01.webp" alt="Vue d'artiste du futur jardin thérapeutique">
-  <div class="wrap">
+  <div class="wrap"><div class="card">
     <div class="eyebrow">Projet de jardin thérapeutique</div>
     <h1>Aidez-nous à faire <em>pousser</em> leur jardin</h1>
     <p>Un jardin pensé pour les jeunes adultes de la MAS Un Toit pour Moi : sentir, toucher, écouter, profiter du soleil.</p>
@@ -332,7 +344,7 @@
       <a class="btn btn-sun donate" href="#" target="_blank" rel="noopener"><svg class="heart"><use href="#i-heart"/></svg>Faire un don</a>
       <a class="btn btn-ghost" href="#association">Découvrir le projet</a>
     </div>
-  </div>
+  </div></div>
   <span class="artist">Vue d'artiste du futur jardin</span>
 </section>
 
