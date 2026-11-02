@@ -47,4 +47,4 @@ Only publish photos of people who have signed an image-rights consent form (sign
 2. In GitHub repo **Settings → Pages → Custom domain**, enter the domain and tick **Enforce HTTPS**.
 
 ## Testing
-Serve `docs/` locally (`python -m http.server`). Open `admin/?branch=<test-branch>` so publishes go to a throwaway branch instead of `main`.
+Serve `docs/` locally with `python serve.py` (http://localhost:8811/, never cached by the browser). Open `admin/?branch=<test-branch>` so publishes go to a throwaway branch instead of `main`.

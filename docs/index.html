@@ -690,10 +690,12 @@ function show(i, quick) {
   $("s-what").innerHTML = esc(f.caption) + more;
   $("s-n").textContent = `${at + 1} / ${frames.length}`;
 }
-function play(on) {
+// now: move to the next photo straight away, so a click on ▶ shows something at once.
+function play(on, now = true) {
   clearInterval(timer); timer = null;
   if (on) {
     if (at >= frames.length - 1) show(0);
+    else if (now) show(at + 1);
     timer = setInterval(() => { if (at >= frames.length - 1) return play(false); show(at + 1); }, HOLD + MORPH);
   }
   $("i-play").classList.toggle("off", !!on);   // SVG elements ignore the .hidden property
@@ -724,7 +726,7 @@ $("rail").addEventListener("keydown", e => {
 });
 // Start the film once, the first time the section is on screen.
 new IntersectionObserver(([e], obs) => {
-  if (e.isIntersecting && frames.length > 1) { obs.disconnect(); if (!calm && !lb.open) play(true); }
+  if (e.isIntersecting && frames.length > 1) { obs.disconnect(); if (!calm && !lb.open) play(true, false); }
 }, { threshold: .55 }).observe($("stage"));
 
 // ---------- menu links: the section's top edge (and its title) right under the top bar ----------
