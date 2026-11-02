@@ -11,7 +11,8 @@ A dark, cinematic photo gallery (slider and grid views) that links to the associ
 - Its content comes from three files in `docs/content/`:
   - `photos.json`: the garden renders (artist's views). The first one is also the hero background, and the first four close the timeline as "Demain".
   - `timeline.json`: `{src, caption, w, h, date}`, where `date` is `YYYY-MM` or empty for "Aujourd'hui". The site groups photos by month, in date order.
-  - `compare.json`: `[{before, after, caption}]`, where `before` is a photo of a spot today and `after` the render of the same spot, both cropped to 4:3 around the same view. Each pair is shown side by side at the end of the garden slider.
+  - `compare.json`: `[{before, after, caption, beforeLabel, afterLabel}]`, where `before` is a photo of a spot today and `after` the render of the same spot, both cropped to 4:3 around the same view. Each pair is a side-by-side slide at the end of the garden slider; when it comes into view, the render sweeps over today's photo on the right.
+- The timeline picture is drawn with WebGL as a "3D photo": each photo has a depth map in `docs/images/depth/` (same file name), made with the Depth Anything V2 small model (ONNX). The camera drifts with parallax, and the next photo grows from the nearest objects to the background. A photo added from the admin page has no depth map yet, so it moves flat; without WebGL, or with reduced motion, plain cross-fades are used.
 - The admin page edits `photos.json` (tab "Le jardin") and `timeline.json` (tab "Notre histoire"). `compare.json` is edited by hand for now.
 - `docs/admin/index.html` is the admin page. On login, the password decrypts a GitHub access key stored in `docs/admin/key.json` (AES-GCM, PBKDF2 with 600,000 iterations). The browser then talks to GitHub directly: each **Publier** is one commit, and GitHub Pages redeploys in 1–2 min.
 - Photos are resized in the browser to 2000 px WebP (about 50–400 KB) before upload.

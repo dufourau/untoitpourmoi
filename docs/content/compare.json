@@ -2,11 +2,43 @@
   {
     "before": "images/compare-01-aujourdhui.webp",
     "after": "images/compare-01-demain.webp",
-    "caption": "L'allée fleurie"
+    "caption": "Le mur d'eau et les lavandes",
+    "beforeLabel": "",
+    "afterLabel": ""
   },
   {
     "before": "images/compare-02-aujourdhui.webp",
     "after": "images/compare-02-demain.webp",
-    "caption": "Les massifs autour de la maison"
+    "caption": "L'aire de jeux",
+    "beforeLabel": "",
+    "afterLabel": ""
+  },
+  {
+    "before": "images/compare-03-aujourdhui.webp",
+    "after": "images/compare-03-demain.webp",
+    "caption": "Le cœur du jardin",
+    "beforeLabel": "Espace convivial",
+    "afterLabel": "Espace central de rencontre"
+  },
+  {
+    "before": "images/compare-04-aujourdhui.webp",
+    "after": "images/compare-04-demain.webp",
+    "caption": "Le coin pique-nique",
+    "beforeLabel": "Espace inutilisé",
+    "afterLabel": "Amphithéâtre végétalisé"
+  },
+  {
+    "before": "images/compare-05-aujourdhui.webp",
+    "after": "images/compare-05-demain.webp",
+    "caption": "Le long des bâtiments",
+    "beforeLabel": "Aujourd'hui impraticable",
+    "afterLabel": "Cheminement carrossable vers un espace de détente"
+  },
+  {
+    "before": "images/compare-06-aujourdhui.webp",
+    "after": "images/compare-06-demain.webp",
+    "caption": "L'allée fleurie",
+    "beforeLabel": "",
+    "afterLabel": ""
   }
 ]
