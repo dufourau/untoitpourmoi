@@ -101,26 +101,34 @@
             letter-spacing: .08em; color: rgba(255,255,255,.85); background: rgba(20,34,18,.45);
             padding: 4px 12px; border-radius: 999px; backdrop-filter: blur(4px); }
 
-  /* Who we are */
+  /* Who we are: fits one screen on a computer (text tighter, photo as tall as the text) */
   .about { background: var(--paper); }
-  .about .wrap { display: grid; grid-template-columns: 1.15fr .85fr; gap: clamp(32px, 6vw, 80px); align-items: start; }
-  .about .text p { margin: 0 0 1.05em; }
-  .about blockquote { margin: 26px 0 30px; padding: 4px 0 4px 22px; border-left: 4px solid var(--lavender);
-                      font-family: "Fraunces", serif; font-style: italic; font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+  .about .wrap { display: grid; grid-template-columns: 1.4fr .6fr; gap: clamp(28px, 4vw, 56px); align-items: stretch; }
+  .about .text { font-size: 1.06rem; line-height: 1.58; }
+  .about h2 { font-size: clamp(1.8rem, 3.4vw, 2.7rem); }
+  .about .eyebrow { margin-bottom: 8px; }
+  .about .text p { margin: 0 0 .65em; }
+  .about blockquote { margin: 14px 0 16px; padding: 2px 0 2px 18px; border-left: 4px solid var(--lavender);
+                      font-family: "Fraunces", serif; font-style: italic; font-size: clamp(1.2rem, 2vw, 1.5rem);
                       line-height: 1.3; color: var(--lavender); }
   .about strong { color: var(--moss); }
-  .about .call { font-family: "Fraunces", serif; font-size: 1.3rem; color: var(--moss); font-weight: 600; margin: 28px 0 22px; }
-  .about figure { margin: 0; position: sticky; top: 100px; }
-  .about figure img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--radius);
+  .about .call { font-family: "Fraunces", serif; font-size: 1.15rem; color: var(--moss); font-weight: 600; margin: 12px 0 14px; }
+  .about figure { margin: 0; display: flex; flex-direction: column; min-height: 0; }
+  .about figure img { width: 100%; flex: 1; min-height: 0; height: 100%; object-fit: cover; border-radius: var(--radius);
                       box-shadow: 0 30px 60px -20px rgba(47,74,44,.35); display: block; }
-  .about figcaption { font-size: .85rem; color: var(--muted); margin-top: 10px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 18px; }
-  .chip { background: var(--sage-soft); color: var(--moss); font-weight: 700; font-size: .84rem;
-          padding: 6px 14px; border-radius: 999px; }
+  .about figcaption { font-size: .85rem; color: var(--muted); margin-top: 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0 10px; }
+  .chip { background: var(--sage-soft); color: var(--moss); font-weight: 700; font-size: .8rem;
+          padding: 4px 12px; border-radius: 999px; }
+  @media (min-width: 861px) {
+    .about { min-height: calc(100svh - 72px); display: flex; align-items: center; padding: 28px 0; }
+    .about .wrap { width: 100%; }
+  }
+  @media (min-width: 861px) and (max-height: 760px) { .about .text { font-size: .94rem; } .about blockquote { margin: 8px 0 10px; } }
   @media (max-width: 860px) {
     .about .wrap { grid-template-columns: 1fr; }
-    .about figure { position: static; order: -1; }
-    .about figure img { aspect-ratio: 16 / 10; }
+    .about figure { order: -1; }
+    .about figure img { aspect-ratio: 16 / 10; height: auto; }
   }
 
   /* Section heads */
@@ -234,26 +242,46 @@
   .rail .stop b.mini { display: none; }
   @media (max-width: 560px) { .rail .stop b { font-size: .68rem; } .rail .stop b.full { display: none; } .rail .stop b.mini { display: block; } .play { width: 44px; height: 44px; } .bar { gap: 32px; padding-right: 24px; } }
 
-  /* Zoomed picture */
-  .lb { position: fixed; inset: 0; z-index: 50; background: rgba(20,30,18,.94); display: flex; flex-direction: column;
-        align-items: center; justify-content: center; gap: 14px; padding: 56px 16px 20px; cursor: zoom-out;
-        opacity: 0; transition: opacity .25s; }
+  /* Zoomed picture: the garden slider's pictures one by one, or the whole timeline player */
+  .lb { position: fixed; inset: 0; z-index: 50; background: rgba(20,30,18,.96); display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 14px; padding: 60px 72px 20px; cursor: zoom-out;
+        opacity: 0; transition: opacity .25s; touch-action: pan-y; }
   .lb.on { opacity: 1; }
   .lb[hidden] { display: none; }
   .lb .pics { display: flex; gap: 12px; align-items: center; justify-content: center; max-width: 100%; min-height: 0; flex: 1; }
-  .lb figure { margin: 0; position: relative; min-width: 0; min-height: 0; max-height: 100%; display: flex; }
-  .lb img { max-width: 100%; max-height: calc(100svh - 140px); object-fit: contain; border-radius: 10px; display: block; }
+  .lb figure { margin: 0; position: relative; min-width: 0; min-height: 0; max-height: 100%; display: flex; cursor: default;
+               border-radius: 10px; overflow: hidden; }
+  .lb img { max-width: 100%; max-height: calc(100svh - 150px); object-fit: contain; display: block; }
   .lb .two figure { flex: 1 1 0; }
-  .lb .lbl { position: absolute; top: 12px; left: 12px; font-weight: 800; font-size: .78rem; letter-spacing: .08em;
+  .lb .now { position: absolute; inset: 0; width: 100%; height: 100%; max-height: none;
+             -webkit-mask-image: linear-gradient(90deg, #000 45%, transparent 55%); mask-image: linear-gradient(90deg, #000 45%, transparent 55%);
+             -webkit-mask-size: 220% 100%; mask-size: 220% 100%; -webkit-mask-position: 0 0; mask-position: 0 0; }
+  .lb .sweep .now { animation: sweep 2.2s .4s cubic-bezier(.5,0,.3,1) both; }
+  .lb .lbl { position: absolute; top: 12px; left: 12px; z-index: 1; font-weight: 800; font-size: .78rem; letter-spacing: .08em;
              text-transform: uppercase; padding: 5px 12px; border-radius: 999px; background: rgba(255,253,248,.92); color: var(--moss); }
   .lb figure + figure .lbl { background: var(--lavender); color: #fff; }
-  .lb p { margin: 0; color: #e3ecd8; font-family: "Fraunces", serif; font-size: 1.15rem; text-align: center; }
-  .lb .x { position: absolute; top: 12px; right: 16px; width: 44px; height: 44px; border-radius: 50%; border: 0; cursor: pointer;
-           background: rgba(255,255,255,.14); color: #fff; font-size: 1.4rem; display: grid; place-items: center; }
-  .lb .x:hover { background: rgba(255,255,255,.26); }
+  .lb > p { margin: 0; color: #e3ecd8; font-family: "Fraunces", serif; font-size: 1.15rem; text-align: center; min-height: 1.5em; }
+  .lb .x, .lb .side { position: absolute; border: 0; cursor: pointer; border-radius: 50%; display: grid; place-items: center;
+                      background: rgba(255,255,255,.14); color: #fff; z-index: 2; }
+  .lb .x { top: 12px; right: 16px; width: 44px; height: 44px; font-size: 1.4rem; }
+  .lb .side { top: 50%; width: 52px; height: 52px; margin-top: -26px; font-size: 1.8rem; }
+  .lb .side.l { left: 12px; } .lb .side.r { right: 12px; }
+  .lb .x:hover, .lb .side:hover { background: rgba(255,255,255,.28); }
+  .lb .side:disabled { opacity: .25; cursor: default; }
+  .lb.story .side { display: none; }
+  /* the timeline player, moved in here as it is */
+  .lb.story .pics { width: 100%; }
+  .lb .player { width: 100%; max-width: min(100%, (100svh - 220px) * 1.5); cursor: default; }
+  .lb .player .stage { cursor: default; }
   @media (orientation: portrait) {
     .lb .two { flex-direction: column; }
-    .lb .two img { max-height: calc(50svh - 90px); }
+    .lb .two img { max-height: calc(50svh - 100px); }
+    .lb .two .now { max-height: none; }
+  }
+  @media (max-width: 640px) {
+    .lb { padding: 60px 10px 16px; }
+    .lb .side { top: auto; bottom: 14px; margin: 0; width: 46px; height: 46px; }
+    .lb > p { padding: 0 54px; font-size: 1rem; }
   }
 
   /* Last call */
@@ -387,6 +415,8 @@
 
 <div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Image agrandie">
   <button class="x" aria-label="Fermer">✕</button>
+  <button class="side l" aria-label="Image précédente">‹</button>
+  <button class="side r" aria-label="Image suivante">›</button>
   <div class="pics" id="lb-pics"></div>
   <p id="lb-cap"></p>
 </div>
@@ -469,9 +499,7 @@ $("track").addEventListener("click", e => {
   const s = e.target.closest(".slide");
   if (!s) return;
   if (+s.dataset.i !== current) return go(+s.dataset.i);
-  const p = slides[current];
-  p.pair ? lb.show([[p.before, "Aujourd'hui"], [p.after, "Demain"]], s.querySelector("figcaption").textContent)
-         : lb.show([[p.src]], p.caption);
+  lb.garden();
 });
 $("dots").addEventListener("click", e => { const b = e.target.closest("button"); if (b) go(+b.dataset.i); });
 $("prev").onclick = () => go(current - 1);
@@ -489,20 +517,46 @@ $("viewport").addEventListener("touchend", e => {
 let gardenVisible = false;
 new IntersectionObserver(([e]) => gardenVisible = e.isIntersecting, { threshold: .5 }).observe($("viewport"));
 addEventListener("keydown", e => {
-  if (!gardenVisible || lb.open || e.target.closest("input, .rail")) return;
+  if (!gardenVisible || lb.open || e.target.closest?.("input, .rail")) return;
   if (e.key === "ArrowLeft") go(current - 1);
   if (e.key === "ArrowRight") go(current + 1);
 });
 
 
-// ---------- zoom: the picture fills the screen; Back, Escape, ✕ or a click closes it ----------
+// ---------- zoom ----------
+// The garden slider zooms picture by picture (arrows, swipe, ← →; pairs replay their sweep).
+// The timeline zooms as a whole: its player moves into the overlay with its animation and controls.
+// Back, Escape, ✕ or a click on the dark background closes it, and the page is as before.
 const lb = {
   open: false,
-  show(pics, caption) {
-    $("lb-pics").className = "pics" + (pics.length > 1 ? " two" : "");
-    $("lb-pics").innerHTML = pics.map(([src, label]) =>
-      `<figure><img src="${esc(src)}" alt="${esc(label || caption || "")}">${label ? `<span class="lbl">${esc(label)}</span>` : ""}</figure>`).join("");
-    $("lb-cap").textContent = caption || "";
+  mode: "",
+  garden() { this.mode = "garden"; this.slide(current); this.enter(); },
+  story() {
+    this.mode = "story";
+    this.player = $("player");
+    this.home = document.createComment("player");
+    this.player.replaceWith(this.home);           // leaves a marker where it goes back
+    $("lb-pics").className = "pics";
+    $("lb-pics").replaceChildren(this.player);
+    $("lb-cap").textContent = "";
+    this.enter();
+  },
+  slide(i) {
+    go(i);                                  // keep the page's slider in step
+    const p = slides[current];
+    const fig = (src, label, extra = "") =>
+      `<figure><img src="${esc(src)}" alt="${esc(label || p.caption || "")}">${extra}${label ? `<span class="lbl">${esc(label)}</span>` : ""}</figure>`;
+    $("lb-pics").className = "pics" + (p.pair ? " two" : "");
+    $("lb-pics").innerHTML = p.pair
+      ? fig(p.before, "Aujourd'hui") + fig(p.before, "Demain", `<img class="now" src="${esc(p.after)}" alt="">`)
+      : fig(p.src);
+    if (p.pair) { void $("lb-pics").offsetWidth; $("lb-pics").classList.add("sweep"); }
+    $("lb-cap").textContent = p.pair ? $("track").children[current].querySelector("figcaption").textContent : p.caption || "";
+    $("lb").querySelector(".l").disabled = current === 0;
+    $("lb").querySelector(".r").disabled = current === slides.length - 1;
+  },
+  enter() {
+    $("lb").classList.toggle("story", this.mode === "story");
     $("lb").hidden = false;
     requestAnimationFrame(() => $("lb").classList.add("on"));
     document.body.style.overflow = "hidden";
@@ -511,15 +565,38 @@ const lb = {
   },
   close() { if (this.open && !this.closing) { this.closing = true; history.back(); } },   // Back then runs hide()
   hide() {
+    if (this.mode === "story") this.home.replaceWith(this.player);
+    $("lb-pics").replaceChildren();
     this.open = this.closing = false;
+    this.mode = "";
     $("lb").classList.remove("on");
     $("lb").hidden = true;
     document.body.style.overflow = "";
   },
+  step(d) {
+    if (this.mode === "garden") this.slide(current + d);
+    if (this.mode === "story") { play(false); show(at + d); }
+  },
 };
-$("lb").addEventListener("click", () => lb.close());
+$("lb").addEventListener("click", e => {
+  if (e.target.closest(".side")) return lb.step(e.target.closest(".side").classList.contains("l") ? -1 : 1);
+  if (e.target.closest("figure, .player") && !e.target.closest(".x")) return;   // clicks on the picture or the controls stay
+  lb.close();
+});
 addEventListener("popstate", () => { if (lb.open) lb.hide(); });
-addEventListener("keydown", e => { if (e.key === "Escape") lb.close(); });
+addEventListener("keydown", e => {
+  if (!lb.open) return;
+  if (e.key === "Escape") lb.close();
+  if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && !e.target.closest?.(".rail")) lb.step(e.key === "ArrowLeft" ? -1 : 1);
+});
+let lx = null;
+$("lb").addEventListener("touchstart", e => { lx = e.target.closest(".rail") ? null : e.touches[0].clientX; }, { passive: true });
+$("lb").addEventListener("touchend", e => {
+  if (lx === null) return;
+  const dx = e.changedTouches[0].clientX - lx;
+  if (Math.abs(dx) > 40) lb.step(dx < 0 ? 1 : -1);
+  lx = null;
+});
 
 // ---------- timeline ----------
 // timeline.json: [{src, caption, date: "YYYY-MM" or "" for today}]. The garden renders close it as "Demain".
@@ -703,11 +780,7 @@ function play(on, now = true) {
   $("play").setAttribute("aria-label", on ? "Pause" : "Lecture");
 }
 $("play").onclick = () => play(!timer);
-$("stage").addEventListener("click", () => {
-  play(false);
-  const f = frames[at];
-  lb.show([[f.src]], `${f.label} · ${f.caption || ""}`);
-});
+$("stage").addEventListener("click", () => { if (!lb.open) lb.story(); });   // keeps playing, now full screen
 // Click or drag along the rail.
 const railIndex = e => {
   const r = $("rail").getBoundingClientRect();
