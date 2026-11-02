@@ -7,7 +7,7 @@
 <meta name="description" content="Aidez l'association Un Toit pour Moi à créer un jardin thérapeutique pour les jeunes adultes de la MAS. Faites un don sur HelloAsso.">
 <meta property="og:title" content="Un Toit pour Moi · Le jardin thérapeutique">
 <meta property="og:description" content="Aidez-nous à faire pousser leur jardin.">
-<meta property="og:image" content="images/jardin-01.webp">
+<meta property="og:image" content="https://dufourau.github.io/untoitpourmoi/images/hero.webp">
 <link rel="icon" href="images/logo.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -93,8 +93,7 @@
           padding: 120px 0 clamp(48px, 8vw, 96px); color: #fff; overflow: hidden; }
   /* The photo sits back as a softened background; the text lives on a frosted-glass card. */
   .hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-              filter: brightness(.86) saturate(1.05); animation: drift 24s ease-out both; }
-  @keyframes drift { from { transform: scale(1.12); } to { transform: scale(1); } }
+              object-position: 50% 60%; filter: brightness(.88) saturate(1.05); }
   .hero::after { content: ""; position: absolute; inset: 0;
                  background: linear-gradient(180deg, rgba(16,28,14,.5) 0%, rgba(16,28,14,0) 22%),
                              linear-gradient(20deg, rgba(16,28,14,.7) 0%, rgba(16,28,14,.25) 50%, rgba(16,28,14,.05) 80%); }
@@ -377,7 +376,7 @@
 </header>
 
 <section class="hero">
-  <img class="hero-img" id="hero-img" src="images/jardin-01.webp" alt="Vue d'artiste du futur jardin thérapeutique">
+  <img class="hero-img" id="hero-img" src="images/hero.webp" data-for="images/jardin-01.webp" alt="Vue d'artiste du futur jardin thérapeutique">
   <div class="wrap"><div class="card">
     <div class="eyebrow">Projet de jardin thérapeutique</div>
     <h1>Aidez-nous à faire <em>pousser</em> leur jardin</h1>
@@ -546,7 +545,8 @@ fetch("content/goal.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : nu
 Promise.all([getJSON("content/photos.json"), getJSON("content/timeline.json"), getJSON("content/compare.json")])
   .then(([photos, timeline, compare]) => {
     photos = photos.filter(p => p.src);
-    if (photos[0]) $("hero-img").src = photos[0].src;
+    // hero.webp is a 2560 px version of the first render; if the admin puts another picture first, use that one
+    if (photos[0] && photos[0].src !== $("hero-img").dataset.for) $("hero-img").src = photos[0].src;
     buildGarden(photos, compare.filter(p => p.before && p.after));
     buildStory(timeline.filter(p => p.src), photos);
   });
