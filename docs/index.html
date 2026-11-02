@@ -132,15 +132,12 @@
 
   /* Garden slider */
   .garden { overflow: hidden; }
-  .views { display: flex; gap: 4px; background: var(--paper); border: 1px solid var(--line); padding: 4px; border-radius: 12px; }
-  .views button { background: none; border: 0; padding: 7px 10px; border-radius: 8px; cursor: pointer; color: var(--muted);
-                  display: grid; place-items: center; }
-  .views button.on { background: var(--moss); color: #fff; }
   .viewport { overflow: hidden; padding: 6px 0 40px; touch-action: pan-y; user-select: none; }
   .track { display: flex; align-items: center; gap: 24px; transition: transform .8s cubic-bezier(.22,.8,.25,1); will-change: transform; }
   .slide { flex: 0 0 min(72vw, 1000px, (100svh - 490px) * 16 / 9); margin: 0; cursor: pointer; opacity: .4; transform: scale(.94);
            transition: opacity .8s, transform .8s; }
-  .slide.current { opacity: 1; transform: none; cursor: default; }
+  .slide.current { opacity: 1; transform: none; cursor: zoom-in; }
+  .stage { cursor: zoom-in; }
   .slide img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; border-radius: var(--radius);
                pointer-events: none; background: var(--sage-soft); }
   .slide.current img { box-shadow: 0 30px 60px -24px rgba(47,74,44,.45); }
@@ -180,15 +177,6 @@
   .dots button { background: none; border: 0; padding: 8px 4px; cursor: pointer; }
   .dots span { display: block; width: 8px; height: 8px; border-radius: 99px; background: var(--sage); transition: all .3s; }
   .dots .on span { width: 26px; background: var(--leaf); }
-  .grid { display: none; columns: 3 280px; column-gap: 16px; }
-  .grid figure { margin: 0 0 16px; break-inside: avoid; cursor: zoom-in; border-radius: 14px; overflow: hidden;
-                 background: var(--sage-soft); position: relative; }
-  .grid img { width: 100%; height: auto; display: block; transition: transform .6s; }
-  .grid figure:hover img { transform: scale(1.04); }
-  .grid figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 30px 14px 10px; color: #fff; font-weight: 700;
-                     font-size: .88rem; background: linear-gradient(transparent, rgba(20,34,18,.75)); }
-  .garden.grid-mode .grid { display: block; }
-  .garden.grid-mode .slider { display: none; }
 
   /* Timeline */
   .story { background: var(--moss); color: #eef3e6; }
@@ -243,6 +231,28 @@
   .rail.drag .knob, .rail.drag .fill { transition: none; }
   .rail .stop b.mini { display: none; }
   @media (max-width: 560px) { .rail .stop b { font-size: .68rem; } .rail .stop b.full { display: none; } .rail .stop b.mini { display: block; } .play { width: 44px; height: 44px; } .bar { gap: 32px; padding-right: 24px; } }
+
+  /* Zoomed picture */
+  .lb { position: fixed; inset: 0; z-index: 50; background: rgba(20,30,18,.94); display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 14px; padding: 56px 16px 20px; cursor: zoom-out;
+        opacity: 0; transition: opacity .25s; }
+  .lb.on { opacity: 1; }
+  .lb[hidden] { display: none; }
+  .lb .pics { display: flex; gap: 12px; align-items: center; justify-content: center; max-width: 100%; min-height: 0; flex: 1; }
+  .lb figure { margin: 0; position: relative; min-width: 0; min-height: 0; max-height: 100%; display: flex; }
+  .lb img { max-width: 100%; max-height: calc(100svh - 140px); object-fit: contain; border-radius: 10px; display: block; }
+  .lb .two figure { flex: 1 1 0; }
+  .lb .lbl { position: absolute; top: 12px; left: 12px; font-weight: 800; font-size: .78rem; letter-spacing: .08em;
+             text-transform: uppercase; padding: 5px 12px; border-radius: 999px; background: rgba(255,253,248,.92); color: var(--moss); }
+  .lb figure + figure .lbl { background: var(--lavender); color: #fff; }
+  .lb p { margin: 0; color: #e3ecd8; font-family: "Fraunces", serif; font-size: 1.15rem; text-align: center; }
+  .lb .x { position: absolute; top: 12px; right: 16px; width: 44px; height: 44px; border-radius: 50%; border: 0; cursor: pointer;
+           background: rgba(255,255,255,.14); color: #fff; font-size: 1.4rem; display: grid; place-items: center; }
+  .lb .x:hover { background: rgba(255,255,255,.26); }
+  @media (orientation: portrait) {
+    .lb .two { flex-direction: column; }
+    .lb .two img { max-height: calc(50svh - 90px); }
+  }
 
   /* Last call */
   .give { background: linear-gradient(135deg, var(--lavender-soft), var(--sage-soft)); text-align: center; }
@@ -327,15 +337,8 @@
         <div class="eyebrow">Le futur jardin</div>
         <h2>Promenade dans le projet <span class="tag">Vues d'artiste</span></h2>
         <p>Des allées accessibles, des plantes à sentir et à toucher, de l'eau, de l'ombre : voici le jardin que nous voulons créer.
-           Au bout de la promenade, comparez avec les lieux tels qu'ils sont aujourd'hui.</p>
-      </div>
-      <div class="views" role="group" aria-label="Affichage">
-        <button id="v-slide" class="on" aria-label="Diaporama" title="Diaporama">
-          <svg width="22" height="16" viewBox="0 0 22 16" fill="currentColor"><rect x="5" y="2" width="12" height="12" rx="2"/><rect x="0" y="4" width="3" height="8" rx="1" opacity=".5"/><rect x="19" y="4" width="3" height="8" rx="1" opacity=".5"/></svg>
-        </button>
-        <button id="v-grid" aria-label="Grille" title="Grille">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
-        </button>
+           Au bout de la promenade, comparez avec les lieux tels qu'ils sont aujourd'hui : les arbres existants sont conservés,
+           le jardin se construit autour d'eux. Cliquez sur une image pour l'agrandir.</p>
       </div>
     </div>
   </div>
@@ -347,7 +350,6 @@
       <button class="round" id="next" aria-label="Image suivante">›</button>
     </div>
   </div>
-  <div class="wrap"><div class="grid" id="grid"></div></div>
 </section>
 
 <section class="story" id="histoire">
@@ -380,6 +382,12 @@
     <a class="btn btn-sun donate" href="#" target="_blank" rel="noopener"><svg class="heart"><use href="#i-heart"/></svg>Faire un don sur HelloAsso</a>
   </div>
 </section>
+
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Image agrandie">
+  <button class="x" aria-label="Fermer">✕</button>
+  <div class="pics" id="lb-pics"></div>
+  <p id="lb-cap"></p>
+</div>
 
 <footer>
   <div class="wrap">
@@ -438,9 +446,6 @@ function buildGarden(photos, pairs) {
     : `<figure class="slide" data-i="${i}"><img src="${esc(p.src)}" alt="${esc(p.caption)}" ${i > 1 ? 'loading="lazy"' : ""}>
        <figcaption>${esc(p.caption)}</figcaption></figure>`).join("");
   $("dots").innerHTML = slides.map((_, i) => `<button data-i="${i}" aria-label="Image ${i + 1}"><span></span></button>`).join("");
-  $("grid").innerHTML = photos.map((p, i) =>
-    `<figure data-i="${i}"><img src="${esc(p.src)}" alt="${esc(p.caption)}" loading="lazy" ${p.w ? `width="${p.w}" height="${p.h}"` : ""}>
-       ${p.caption ? `<figcaption>${esc(p.caption)}</figcaption>` : ""}</figure>`).join("");
   go(0);
 }
 function go(i) {
@@ -458,7 +463,14 @@ function go(i) {
   });
   [...$("dots").children].forEach((d, n) => d.classList.toggle("on", n === current));
 }
-$("track").addEventListener("click", e => { const s = e.target.closest(".slide"); if (s) go(+s.dataset.i); });
+$("track").addEventListener("click", e => {
+  const s = e.target.closest(".slide");
+  if (!s) return;
+  if (+s.dataset.i !== current) return go(+s.dataset.i);
+  const p = slides[current];
+  p.pair ? lb.show([[p.before, "Aujourd'hui"], [p.after, "Demain"]], s.querySelector("figcaption").textContent)
+         : lb.show([[p.src]], p.caption);
+});
 $("dots").addEventListener("click", e => { const b = e.target.closest("button"); if (b) go(+b.dataset.i); });
 $("prev").onclick = () => go(current - 1);
 $("next").onclick = () => go(current + 1);
@@ -475,19 +487,37 @@ $("viewport").addEventListener("touchend", e => {
 let gardenVisible = false;
 new IntersectionObserver(([e]) => gardenVisible = e.isIntersecting, { threshold: .5 }).observe($("viewport"));
 addEventListener("keydown", e => {
-  if (!gardenVisible || $("jardin").classList.contains("grid-mode") || e.target.closest("input, .rail")) return;
+  if (!gardenVisible || lb.open || e.target.closest("input, .rail")) return;
   if (e.key === "ArrowLeft") go(current - 1);
   if (e.key === "ArrowRight") go(current + 1);
 });
-const setMode = grid => {
-  $("jardin").classList.toggle("grid-mode", grid);
-  $("v-grid").classList.toggle("on", grid);
-  $("v-slide").classList.toggle("on", !grid);
-  if (!grid) requestAnimationFrame(() => go(current));
+
+
+// ---------- zoom: the picture fills the screen; Back, Escape, ✕ or a click closes it ----------
+const lb = {
+  open: false,
+  show(pics, caption) {
+    $("lb-pics").className = "pics" + (pics.length > 1 ? " two" : "");
+    $("lb-pics").innerHTML = pics.map(([src, label]) =>
+      `<figure><img src="${esc(src)}" alt="${esc(label || caption || "")}">${label ? `<span class="lbl">${esc(label)}</span>` : ""}</figure>`).join("");
+    $("lb-cap").textContent = caption || "";
+    $("lb").hidden = false;
+    requestAnimationFrame(() => $("lb").classList.add("on"));
+    document.body.style.overflow = "hidden";
+    if (!this.open) history.pushState({ lb: 1 }, "");   // so the browser's Back button closes it
+    this.open = true;
+  },
+  close() { if (this.open && !this.closing) { this.closing = true; history.back(); } },   // Back then runs hide()
+  hide() {
+    this.open = this.closing = false;
+    $("lb").classList.remove("on");
+    $("lb").hidden = true;
+    document.body.style.overflow = "";
+  },
 };
-$("v-grid").onclick = () => setMode(true);
-$("v-slide").onclick = () => setMode(false);
-$("grid").addEventListener("click", e => { const f = e.target.closest("figure"); if (f) { current = +f.dataset.i; setMode(false); } });
+$("lb").addEventListener("click", () => lb.close());
+addEventListener("popstate", () => { if (lb.open) lb.hide(); });
+addEventListener("keydown", e => { if (e.key === "Escape") lb.close(); });
 
 // ---------- timeline ----------
 // timeline.json: [{src, caption, date: "YYYY-MM" or "" for today}]. The garden renders close it as "Demain".
@@ -669,6 +699,11 @@ function play(on) {
   $("play").setAttribute("aria-label", on ? "Pause" : "Lecture");
 }
 $("play").onclick = () => play(!timer);
+$("stage").addEventListener("click", () => {
+  play(false);
+  const f = frames[at];
+  lb.show([[f.src]], `${f.label} · ${f.caption || ""}`);
+});
 // Click or drag along the rail.
 const railIndex = e => {
   const r = $("rail").getBoundingClientRect();
@@ -687,7 +722,7 @@ $("rail").addEventListener("keydown", e => {
 });
 // Start the film once, the first time the section is on screen.
 new IntersectionObserver(([e], obs) => {
-  if (e.isIntersecting && frames.length > 1) { obs.disconnect(); if (!calm) play(true); }
+  if (e.isIntersecting && frames.length > 1) { obs.disconnect(); if (!calm && !lb.open) play(true); }
 }, { threshold: .55 }).observe($("stage"));
 
 // ---------- menu links: the section's top edge (and its title) right under the top bar ----------
@@ -701,7 +736,7 @@ document.addEventListener("click", e => {
   const a = e.target.closest('a[href^="#"]');
   if (!a || a.getAttribute("href") === "#") return;
   e.preventDefault();
-  if (a.dataset.slide) { setMode(false); go(+a.dataset.slide); }
+  if (a.dataset.slide) go(+a.dataset.slide);
   jump(a.getAttribute("href"));
   history.replaceState(null, "", a.getAttribute("href"));
 });
