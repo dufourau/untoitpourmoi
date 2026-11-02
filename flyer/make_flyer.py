@@ -83,7 +83,7 @@ h1 em {{ color: #f4b223; font-size: 1.08em; }}
     <div class="goal"><b>Objectif 50&nbsp;000&nbsp;€</b> chaque don compte</div>
   </div>
 </div>
-<div class="foot"><span><strong>Association Un Toit pour Moi</strong></span><span>Dons sécurisés via HelloAsso · 100&nbsp;% reversés à l'association</span></div>
+<div class="foot"><span><strong>Association Un Toit pour Moi</strong> · Marseille</span><span>Dons sécurisés via HelloAsso · 100&nbsp;% reversés à l'association</span></div>
 </body></html>"""
 
 
@@ -125,7 +125,7 @@ def email_html(url, shown):
   <tr><td style="padding:22px 36px 30px;font-size:16px;line-height:1.6;">
     <p style="margin:0 0 12px;">Chaque don, même petit, fait pousser une plante, une allée, <strong>un sourire</strong>. Et transférer ce message à vos proches
       nous aide tout autant.</p>
-    <p style="margin:0;">Merci du fond du cœur,<br><strong style="color:#1f3a2a;">L'association Un Toit pour Moi</strong></p>
+    <p style="margin:0;">Merci du fond du cœur,<br><strong style="color:#1f3a2a;">L'association Un Toit pour Moi</strong>, Marseille</p>
   </td></tr>
   <tr><td style="background:#13281c;color:#c9ddb8;font-size:12px;padding:14px 36px;">Objectif&nbsp;: 50&nbsp;000&nbsp;€ · Dons sécurisés via HelloAsso, 100&nbsp;% reversés à l'association</td></tr>
 </table></td></tr></table></body></html>"""
@@ -148,7 +148,7 @@ Découvrez le projet en images et notre histoire depuis la première pierre :
 Chaque don, même petit, fait pousser une plante, une allée, un sourire. Et transférer ce message à vos proches nous aide tout autant.
 
 Merci du fond du cœur,
-L'association Un Toit pour Moi
+L'association Un Toit pour Moi, Marseille
 
 MESSAGE COURT (WhatsApp, SMS, réseaux sociaux)
 🏡 Ils ont un toit. Offrons-leur un jardin 🌿
