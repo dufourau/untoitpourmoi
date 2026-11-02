@@ -32,7 +32,7 @@
     --gutter: clamp(16px, 5vw, 64px);
   }
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+  html { scroll-padding-top: 76px; }
   body { margin: 0; background: var(--cream); color: var(--ink); overflow-x: hidden;
          font: 17px/1.65 "Nunito", system-ui, sans-serif; }
   img { max-width: 100%; }
@@ -137,13 +137,28 @@
                   display: grid; place-items: center; }
   .views button.on { background: var(--moss); color: #fff; }
   .viewport { overflow: hidden; padding: 6px 0 40px; touch-action: pan-y; user-select: none; }
-  .track { display: flex; gap: 24px; transition: transform .8s cubic-bezier(.22,.8,.25,1); will-change: transform; }
-  .slide { flex: 0 0 min(72vw, 1000px); margin: 0; cursor: pointer; opacity: .4; transform: scale(.94);
+  .track { display: flex; align-items: center; gap: 24px; transition: transform .8s cubic-bezier(.22,.8,.25,1); will-change: transform; }
+  .slide { flex: 0 0 min(72vw, 1000px, (100svh - 300px) * 16 / 9); margin: 0; cursor: pointer; opacity: .4; transform: scale(.94);
            transition: opacity .8s, transform .8s; }
   .slide.current { opacity: 1; transform: none; cursor: default; }
-  .slide img { width: 100%; aspect-ratio: 16 / 9; max-height: 64vh; object-fit: cover; display: block; border-radius: var(--radius);
+  .slide img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; border-radius: var(--radius);
                pointer-events: none; background: var(--sage-soft); }
   .slide.current img { box-shadow: 0 30px 60px -24px rgba(47,74,44,.45); }
+  /* Today / tomorrow, side by side */
+  .pair .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .pair .half { position: relative; }
+  .pair img { aspect-ratio: 4 / 3; }
+  .pair .lbl { position: absolute; top: 12px; left: 12px; font-weight: 800; font-size: .74rem; letter-spacing: .08em;
+               text-transform: uppercase; padding: 4px 11px; border-radius: 999px; background: rgba(255,253,248,.92); color: var(--moss); }
+  .pair .half + .half .lbl { background: var(--lavender); color: #fff; }
+  .pair .half + .half::before { content: "→"; position: absolute; left: -23px; top: 50%; z-index: 1; transform: translateY(-50%);
+                                width: 36px; height: 36px; border-radius: 50%; background: var(--sun); color: #2a2208;
+                                display: grid; place-items: center; font-weight: 800; box-shadow: 0 4px 14px rgba(0,0,0,.25); }
+  @media (max-width: 760px) {
+    .pair .two { gap: 6px; }
+    .pair .lbl { top: 8px; left: 8px; font-size: .62rem; padding: 3px 8px; }
+    .pair .half + .half::before { width: 28px; height: 28px; left: -17px; }
+  }
   .slide figcaption { font-family: "Fraunces", serif; font-size: 1.15rem; color: var(--moss); padding: 14px 4px 0;
                       opacity: 0; transition: opacity .6s .2s; }
   .slide.current figcaption { opacity: 1; }
@@ -171,15 +186,16 @@
   .story h2, .story .eyebrow { color: #fff; }
   .story .eyebrow { color: var(--sun-hi); }
   .story .head p { color: #c8d6bd; }
-  .stage { position: relative; aspect-ratio: 16 / 9; max-height: 60vh; width: 100%; border-radius: var(--radius); overflow: hidden; background: #22361f;
+  .player { max-width: min(100%, (100svh - 300px) * 1.5); margin: 0 auto; }
+  .stage { position: relative; aspect-ratio: 3 / 2; width: 100%; border-radius: var(--radius); overflow: hidden; background: #22361f;
            box-shadow: 0 40px 80px -30px rgba(0,0,0,.55); }
   .frame { position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s ease; }
   .frame.on { opacity: 1; z-index: 1; }
-  .frame .blur { position: absolute; inset: -40px; background: center / cover no-repeat; filter: blur(30px) brightness(.7); }
   .frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .frame.wide img { object-fit: contain; }
+  .frame.wide.on img { animation: none; }
   .frame.on img { animation: kb 7s ease-out both; }
-  @keyframes kb { from { transform: scale(1); } to { transform: scale(1.07); } }
+  @keyframes kb { from { transform: scale(1); } to { transform: scale(1.04); } }
   .frame .when { position: absolute; left: 18px; top: 16px; z-index: 2; background: rgba(255,253,248,.92); color: var(--moss);
                  font-weight: 800; font-size: .8rem; letter-spacing: .06em; padding: 5px 12px; border-radius: 999px; }
   .frame.future .when { background: var(--lavender); color: #fff; }
@@ -190,7 +206,7 @@
   .story-cap .n { color: #9fb48f; font-size: .85rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
   @media (max-width: 640px) { .story-cap { flex-wrap: wrap; gap: 4px 14px; } .story-cap .what { flex-basis: 100%; order: 3; } }
   .bar { display: flex; align-items: center; gap: 46px; padding-right: 30px; }
-  .play svg[hidden] { display: none; }
+  .play .off { display: none; }
   .play { background: var(--sun); color: #2a2208; border: 0; width: 52px; height: 52px; border-radius: 50%; cursor: pointer;
           display: grid; place-items: center; flex: 0 0 auto; box-shadow: 0 6px 18px rgba(244,178,35,.35); }
   .play:hover { background: var(--sun-hi); }
@@ -215,29 +231,6 @@
   .rail.drag .knob, .rail.drag .fill { transition: none; }
   .rail .stop b.mini { display: none; }
   @media (max-width: 560px) { .rail .stop b { font-size: .68rem; } .rail .stop b.full { display: none; } .rail .stop b.mini { display: block; } .play { width: 44px; height: 44px; } .bar { gap: 32px; padding-right: 24px; } }
-
-  /* Before / after */
-  .compare { position: relative; aspect-ratio: 16 / 9; border-radius: var(--radius); overflow: hidden; user-select: none;
-             box-shadow: 0 30px 60px -24px rgba(47,74,44,.45); --pos: 50%; background: var(--sage-soft); }
-  .compare img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
-  .compare .before { clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
-  .compare .handle { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 3px; margin-left: -1.5px; background: #fff;
-                     pointer-events: none; box-shadow: 0 0 12px rgba(0,0,0,.3); }
-  .compare .handle::after { content: "‹ ›"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-                            width: 50px; height: 50px; border-radius: 50%; background: #fff; color: var(--moss);
-                            display: grid; place-items: center; font-weight: 800; font-size: 1.2rem; letter-spacing: 2px;
-                            box-shadow: 0 4px 16px rgba(0,0,0,.3); }
-  .compare .lbl { position: absolute; top: 16px; z-index: 1; font-weight: 800; font-size: .78rem; letter-spacing: .08em;
-                  text-transform: uppercase; padding: 5px 12px; border-radius: 999px; pointer-events: none; }
-  .compare .lbl.l { left: 16px; background: rgba(255,253,248,.92); color: var(--moss); }
-  .compare .lbl.r { right: 16px; background: var(--lavender); color: #fff; }
-  .compare input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; z-index: 2; }
-  .pairs { display: flex; gap: 12px; margin-top: 16px; overflow-x: auto; padding-bottom: 6px; }
-  .pairs button { flex: 0 0 auto; border: 2px solid transparent; border-radius: 12px; padding: 0; overflow: hidden;
-                  cursor: pointer; background: none; opacity: .65; transition: all .2s; }
-  .pairs button.on { border-color: var(--leaf); opacity: 1; }
-  .pairs img { display: block; width: 120px; aspect-ratio: 16 / 9; object-fit: cover; }
-  .pair-cap { font-family: "Fraunces", serif; font-size: 1.2rem; color: var(--moss); margin: 16px 0 0; }
 
   /* Last call */
   .give { background: linear-gradient(135deg, var(--lavender-soft), var(--sage-soft)); text-align: center; }
@@ -273,7 +266,6 @@
     <a href="#association">Qui sommes-nous</a>
     <a href="#jardin">Le jardin</a>
     <a href="#histoire">Notre histoire</a>
-    <a href="#avant-apres" class="needs-compare" hidden>Avant / après</a>
   </nav>
   <a class="btn btn-sun donate" href="#" target="_blank" rel="noopener"><svg class="heart"><use href="#i-heart"/></svg>Faire un don</a>
 </header>
@@ -322,7 +314,8 @@
       <div>
         <div class="eyebrow">Le futur jardin</div>
         <h2>Promenade dans le projet <span class="tag">Vues d'artiste</span></h2>
-        <p>Des allées accessibles, des plantes à sentir et à toucher, de l'eau, de l'ombre : voici le jardin que nous voulons créer.</p>
+        <p>Des allées accessibles, des plantes à sentir et à toucher, de l'eau, de l'ombre : voici le jardin que nous voulons créer.
+           Au bout de la promenade, comparez avec les lieux tels qu'ils sont aujourd'hui.</p>
       </div>
       <div class="views" role="group" aria-label="Affichage">
         <button id="v-slide" class="on" aria-label="Diaporama" title="Diaporama">
@@ -354,35 +347,17 @@
         <p>Appuyez sur lecture, ou faites glisser le curseur le long des dates.</p>
       </div>
     </div>
+    <div class="player" id="player">
     <div class="stage" id="stage"></div>
     <div class="story-cap" aria-live="polite"><span class="date" id="s-date"></span><span class="what" id="s-what"></span><span class="n" id="s-n"></span></div>
     <div class="bar">
       <button class="play" id="play" aria-label="Lecture">
         <svg id="i-play" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><path d="M4 2.5v13L15.5 9z"/></svg>
-        <svg id="i-pause" width="18" height="18" viewBox="0 0 18 18" fill="currentColor" hidden><rect x="3.5" y="2.5" width="4" height="13" rx="1"/><rect x="10.5" y="2.5" width="4" height="13" rx="1"/></svg>
+        <svg id="i-pause" class="off" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><rect x="3.5" y="2.5" width="4" height="13" rx="1"/><rect x="10.5" y="2.5" width="4" height="13" rx="1"/></svg>
       </button>
       <div class="rail" id="rail" role="slider" tabindex="0" aria-label="Chronologie"></div>
     </div>
-  </div>
-</section>
-
-<section id="avant-apres" hidden>
-  <div class="wrap">
-    <div class="head reveal">
-      <div>
-        <div class="eyebrow">Avant / après</div>
-        <h2>Aujourd'hui… et demain</h2>
-        <p>Faites glisser la poignée pour voir le même endroit aujourd'hui, puis tel que nous l'imaginons.</p>
-      </div>
     </div>
-    <div class="compare" id="compare">
-      <img class="after" alt=""><img class="before" alt="">
-      <span class="lbl l">Aujourd'hui</span><span class="lbl r">Demain</span>
-      <div class="handle"></div>
-      <input type="range" min="0" max="100" value="50" step="0.5" aria-label="Comparer aujourd'hui et demain">
-    </div>
-    <p class="pair-cap" id="pair-cap"></p>
-    <div class="pairs" id="pairs"></div>
   </div>
 </section>
 
@@ -429,19 +404,24 @@ Promise.all([getJSON("content/photos.json"), getJSON("content/timeline.json"), g
   .then(([photos, timeline, compare]) => {
     photos = photos.filter(p => p.src);
     if (photos[0]) $("hero-img").src = photos[0].src;
-    buildGarden(photos);
-    buildCompare(compare.filter(p => p.before && p.after));   // before the timeline, which links to it
+    buildGarden(photos, compare.filter(p => p.before && p.after));
     buildStory(timeline.filter(p => p.src), photos);
   });
 
 // ---------- garden slider ----------
-let slides = [], current = 0;
-function buildGarden(photos) {
-  slides = photos;
-  $("track").innerHTML = photos.map((p, i) =>
-    `<figure class="slide" data-i="${i}"><img src="${esc(p.src)}" alt="${esc(p.caption)}" ${i > 1 ? 'loading="lazy"' : ""}>
+// The renders first, then each "today / tomorrow" pair (compare.json) as one side-by-side slide.
+let slides = [], current = 0, firstPair = -1;
+function buildGarden(photos, pairs) {
+  slides = [...photos, ...pairs.map(p => ({ ...p, pair: true }))];
+  firstPair = pairs.length ? photos.length : -1;
+  $("track").innerHTML = slides.map((p, i) => p.pair
+    ? `<figure class="slide pair" data-i="${i}"><div class="two">
+         <div class="half"><img src="${esc(p.before)}" alt="Aujourd'hui : ${esc(p.caption)}" loading="lazy"><span class="lbl">Aujourd'hui</span></div>
+         <div class="half"><img src="${esc(p.after)}" alt="Demain : ${esc(p.caption)}" loading="lazy"><span class="lbl">Demain</span></div></div>
+       <figcaption>${esc(p.caption)} : aujourd'hui, et demain</figcaption></figure>`
+    : `<figure class="slide" data-i="${i}"><img src="${esc(p.src)}" alt="${esc(p.caption)}" ${i > 1 ? 'loading="lazy"' : ""}>
        <figcaption>${esc(p.caption)}</figcaption></figure>`).join("");
-  $("dots").innerHTML = photos.map((_, i) => `<button data-i="${i}" aria-label="Image ${i + 1}"><span></span></button>`).join("");
+  $("dots").innerHTML = slides.map((_, i) => `<button data-i="${i}" aria-label="Image ${i + 1}"><span></span></button>`).join("");
   $("grid").innerHTML = photos.map((p, i) =>
     `<figure data-i="${i}"><img src="${esc(p.src)}" alt="${esc(p.caption)}" loading="lazy" ${p.w ? `width="${p.w}" height="${p.h}"` : ""}>
        ${p.caption ? `<figcaption>${esc(p.caption)}</figcaption>` : ""}</figure>`).join("");
@@ -509,7 +489,6 @@ function buildStory(timeline, photos) {
   $("stage").innerHTML = frames.map((f, i) => {
     const wide = f.w && f.h && f.w / f.h > 2.1;
     return `<div class="frame ${wide ? "wide" : ""} ${f.future ? "future" : ""}">
-      ${wide ? `<div class="blur" style="background-image:url('${esc(f.src)}')"></div>` : ""}
       <img src="${esc(f.src)}" alt="${esc(f.caption)}" loading="lazy"><span class="when">${esc(f.label)}</span></div>`;
   }).join("");
   const pct = i => frames.length > 1 ? (i / (frames.length - 1)) * 100 : 0;
@@ -538,7 +517,7 @@ function show(i) {
   $("rail").setAttribute("aria-valuetext", `${f.label} : ${f.caption || ""}`);
   $("s-date").textContent = f.label;
   const more = at === frames.length - 1
-    ? (hasCompare ? ` <a href="#avant-apres">Voir l'avant / après ↓</a>` : ` <a href="#jardin">Voir tout le jardin ↑</a>`) : "";
+    ? ` <a href="#jardin" data-slide="${Math.max(0, firstPair)}">${firstPair >= 0 ? "Comparer aujourd'hui et demain ↑" : "Voir tout le jardin ↑"}</a>` : "";
   $("s-what").innerHTML = esc(f.caption) + more;
   $("s-n").textContent = `${at + 1} / ${frames.length}`;
 }
@@ -548,8 +527,8 @@ function play(on) {
     if (at >= frames.length - 1) show(0);
     timer = setInterval(() => { if (at >= frames.length - 1) return play(false); show(at + 1); }, 3800);
   }
-  $("i-play").hidden = !!on;
-  $("i-pause").hidden = !on;
+  $("i-play").classList.toggle("off", !!on);   // SVG elements ignore the .hidden property
+  $("i-pause").classList.toggle("off", !on);
   $("play").setAttribute("aria-label", on ? "Pause" : "Lecture");
 }
 $("play").onclick = () => play(!timer);
@@ -574,49 +553,25 @@ new IntersectionObserver(([e], obs) => {
   if (e.isIntersecting && frames.length > 1) { obs.disconnect(); if (!calm) play(true); }
 }, { threshold: .55 }).observe($("stage"));
 
-// ---------- before / after ----------
-// compare.json: [{before, after, caption}], before = photo today, after = render of the same spot.
-let hasCompare = false;
-function buildCompare(pairs) {
-  if (!pairs.length) return;
-  hasCompare = true;
-  $("avant-apres").hidden = false;
-  document.querySelectorAll(".needs-compare").forEach(a => a.hidden = false);
-  const box = $("compare"), range = box.querySelector("input");
-  const set = v => { box.style.setProperty("--pos", v + "%"); range.value = v; };
-  const pick = n => {
-    const p = pairs[n];
-    box.querySelector(".before").src = p.before;
-    box.querySelector(".after").src = p.after;
-    box.querySelector(".before").alt = "Aujourd'hui : " + (p.caption || "");
-    box.querySelector(".after").alt = "Demain (vue d'artiste) : " + (p.caption || "");
-    $("pair-cap").textContent = p.caption || "";
-    [...$("pairs").children].forEach((b, k) => b.classList.toggle("on", k === n));
-    set(50);
-  };
-  range.addEventListener("input", () => set(range.value));
-  $("pairs").innerHTML = pairs.length > 1
-    ? pairs.map((p, n) => `<button data-n="${n}" aria-label="${esc(p.caption || "Comparaison " + (n + 1))}"><img src="${esc(p.after)}" alt="" loading="lazy"></button>`).join("") : "";
-  $("pairs").addEventListener("click", e => { const b = e.target.closest("button"); if (b) pick(+b.dataset.n); });
-  pick(0);
-  // A small sweep the first time, to show the handle can be moved.
-  new IntersectionObserver(([e], obs) => {
-    if (!e.isIntersecting || calm) return;
-    obs.disconnect();
-    const keys = [[0, 50], [700, 18], [1500, 82], [2200, 50]];
-    const t0 = performance.now();
-    const step = t => {
-      const dt = t - t0;
-      const k = keys.findIndex(([tk]) => tk > dt);
-      if (k === -1) return set(50);
-      const [ta, va] = keys[k - 1], [tb, vb] = keys[k];
-      const u = (dt - ta) / (tb - ta), ease = u < .5 ? 2 * u * u : 1 - (-2 * u + 2) ** 2 / 2;
-      set(va + (vb - va) * ease);
-      requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  }, { threshold: .6 }).observe(box);
+// ---------- menu links: centre the pictures under the top bar ----------
+const FOCUS = { "#jardin": ".slider", "#histoire": "#player" };
+function jump(hash, smooth = true) {
+  const sec = document.querySelector(hash);
+  if (!sec) return;
+  const el = (FOCUS[hash] && document.querySelector(FOCUS[hash])) || sec;
+  const bar = header.offsetHeight, room = innerHeight - bar, r = el.getBoundingClientRect();
+  const y = r.height < room ? r.top + scrollY - bar - (room - r.height) / 2 : r.top + scrollY - bar - 12;
+  scrollTo({ top: Math.max(0, y), behavior: smooth && !calm ? "smooth" : "auto" });
 }
+document.addEventListener("click", e => {
+  const a = e.target.closest('a[href^="#"]');
+  if (!a || a.getAttribute("href") === "#") return;
+  e.preventDefault();
+  if (a.dataset.slide) { setMode(false); go(+a.dataset.slide); }
+  jump(a.getAttribute("href"));
+  history.replaceState(null, "", a.getAttribute("href"));
+});
+if (location.hash) addEventListener("load", () => jump(location.hash, false));
 </script>
 </body>
 </html>

@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "before": "images/compare-01-aujourdhui.webp",
+    "after": "images/compare-01-demain.webp",
+    "caption": "L'allée fleurie"
+  },
+  {
+    "before": "images/compare-02-aujourdhui.webp",
+    "after": "images/compare-02-demain.webp",
+    "caption": "Les massifs autour de la maison"
+  }
+]
