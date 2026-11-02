@@ -199,11 +199,13 @@
   .frame .when { position: absolute; left: 18px; top: 16px; z-index: 2; background: rgba(255,253,248,.92); color: var(--moss);
                  font-weight: 800; font-size: .8rem; letter-spacing: .06em; padding: 5px 12px; border-radius: 999px; }
   .frame.future .when { background: var(--lavender); color: #fff; }
-  .story-cap { display: flex; align-items: baseline; gap: 18px; margin: 22px 0 26px; min-height: 3.4em; }
-  .story-cap .date { font-family: "Fraunces", serif; font-size: clamp(1.5rem, 3vw, 2.1rem); color: #fff; white-space: nowrap; }
-  .story-cap .what { color: #d7e3cb; flex: 1; }
+  /* Always the same height (two lines of text), so the controls below never jump. */
+  .story-cap { display: flex; align-items: flex-start; gap: 18px; margin: 22px 0 26px; }
+  .story-cap .date { font-family: "Fraunces", serif; font-size: clamp(1.5rem, 3vw, 2.1rem); line-height: 1.15; color: #fff; white-space: nowrap; }
+  .story-cap .what { color: #d7e3cb; flex: 1; line-height: 1.5; height: 3em; overflow: hidden; padding-top: .35em; box-sizing: content-box;
+                     display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
   .story-cap .what a { color: var(--sun-hi); font-weight: 700; }
-  .story-cap .n { color: #9fb48f; font-size: .85rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .story-cap .n { color: #9fb48f; font-size: .85rem; padding-top: .6em; white-space: nowrap; font-variant-numeric: tabular-nums; }
   @media (max-width: 640px) { .story-cap { flex-wrap: wrap; gap: 4px 14px; } .story-cap .what { flex-basis: 100%; order: 3; } }
   .bar { display: flex; align-items: center; gap: 46px; padding-right: 30px; }
   .play .off { display: none; }
