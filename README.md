@@ -48,3 +48,10 @@ Only publish photos of people who have signed an image-rights consent form (sign
 
 ## Testing
 Serve `docs/` locally with `python serve.py` (http://localhost:8811/, never cached by the browser). Open `admin/?branch=<test-branch>` so publishes go to a throwaway branch instead of `main`.
+
+## Flyer, email and QR code (`flyer/`)
+`python -E flyer/make_flyer.py [--url https://new-domain/]` rebuilds everything in `flyer/out/`:
+the A5 flyer (`flyer.pdf`, `flyer.png`), the house-shaped QR code (`qr_maison.svg/.png`), the invitation
+email (`email.html`: open it in a browser, select all, copy, paste into a new mail) and `messages.txt`
+(subject line, plain-text mail, short messages). It checks that each QR scans. The email's pictures are
+served from `docs/flyer/`, so push the site after rebuilding. When the domain is bought: rerun with `--url`.
