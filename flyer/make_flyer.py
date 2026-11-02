@@ -167,7 +167,7 @@ def check(png, url):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--url", default="https://dufourau.github.io/untoitpourmoi/")
+    ap.add_argument("--url", default="https://untoitpourmoi.org/")
     url = ap.parse_args().url
     shown = url.split("://", 1)[-1].rstrip("/")
     OUT.mkdir(exist_ok=True)

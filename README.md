@@ -2,8 +2,8 @@
 
 A dark, cinematic photo gallery (slider and grid views) that links to the association's HelloAsso page. A password-protected admin page lets someone drag and drop photos in. It's all free on GitHub Pages: no server and no other account.
 
-- Site: https://dufourau.github.io/untoitpourmoi/
-- Admin: https://dufourau.github.io/untoitpourmoi/admin/
+- Site: https://untoitpourmoi.org/ (the old https://dufourau.github.io/untoitpourmoi/ redirects there)
+- Admin: https://untoitpourmoi.org/admin/
 
 ## How it works
 - `docs/` is what GitHub Pages serves.
@@ -33,7 +33,7 @@ The repo is public, so `key.json` is readable by anyone, but encrypted. Security
 When the key expires, publishing fails with "Clé GitHub refusée". Make a new key and repeat steps 2–3. You can keep the same password or choose a new one.
 
 ## For the person adding photos
-1. Open **https://dufourau.github.io/untoitpourmoi/admin/**.
+1. Open **https://untoitpourmoi.org/admin/**.
 2. Type the password.
 3. Choose the tab: **Le jardin** (images of the future garden), **Avant / après** (pairs: today's photo and the project image, from the same spot), **Notre histoire** (dated photos of the construction and of today) or **Cagnotte** (the amount collected, copied from HelloAsso).
 4. Drag photos into the box, or click it to choose them. Add a caption if you want one. In **Le jardin**, drag the thumbnails to change the order; the first one is the background of the home page. In **Notre histoire**, set the month of each photo, or leave it empty for "Aujourd'hui". Use ✕ to remove a photo.
