@@ -63,7 +63,36 @@
   .card.new { border-color: var(--sun); }
   .card.dragging { opacity: .4; }
   .card.target { border-color: var(--leaf); }
-  .card .img { aspect-ratio: 4 / 3; background: var(--sage-soft) center/cover no-repeat; cursor: grab; }
+  /* the preview has the slot's own shape, so what shows here is what shows on the site */
+  .card .img { position: relative; background: var(--sage-soft); cursor: grab; overflow: hidden; }
+  .card .img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .warn { position: absolute; left: 6px; right: 6px; bottom: 6px; z-index: 1; background: rgba(184,67,58,.92); color: #fff; font-size: .72rem;
+          font-weight: 700; padding: 3px 8px; border-radius: 8px; line-height: 1.3; }
+  label.icon { display: grid; place-items: center; }
+  /* before / after pairs */
+  .cards.pairs { grid-template-columns: repeat(auto-fill, minmax(min(360px, 100%), 1fr)); }
+  .halves { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+  .half { position: relative; aspect-ratio: 4 / 3; background: var(--sage-soft); cursor: pointer; overflow: hidden; display: grid;
+          place-items: center; text-align: center; color: var(--leaf); font-weight: 700; font-size: .85rem; padding: 8px; }
+  .half img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .half.over { outline: 3px solid var(--sun); outline-offset: -3px; }
+  .half .lbl { position: absolute; top: 6px; left: 6px; z-index: 1; font-size: .68rem; font-weight: 800; letter-spacing: .06em;
+               text-transform: uppercase; padding: 2px 8px; border-radius: 999px; background: rgba(255,255,255,.92); color: var(--moss); }
+  .half + .half .lbl { background: #7d6bb0; color: #fff; }
+  .half .swap { position: absolute; right: 6px; top: 6px; z-index: 1; font-size: .7rem; background: rgba(0,0,0,.55); color: #fff;
+                padding: 2px 7px; border-radius: 999px; opacity: 0; transition: opacity .2s; }
+  .half:hover .swap { opacity: 1; }
+  .add-pair { display: block; width: 100%; border: 2px dashed #b9c7ab; border-radius: 16px; padding: 22px; background: var(--sage-soft);
+              color: var(--moss); font-weight: 800; font-size: 1.05rem; cursor: pointer; }
+  .add-pair:hover { border-color: var(--sun); background: #fdf1d3; }
+  /* the fundraising total */
+  .money { max-width: 560px; background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 26px; display: grid; gap: 16px; }
+  .money label { display: grid; gap: 6px; font-weight: 700; color: var(--moss); }
+  .money .eur { display: flex; align-items: center; gap: 8px; font-size: 1.3rem; font-weight: 800; }
+  .money input { width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line); font-size: 1.3rem; font-weight: 800; color: var(--ink); }
+  .money .bar { height: 12px; border-radius: 99px; background: var(--sage-soft); overflow: hidden; }
+  .money .bar i { display: block; height: 100%; width: 0; border-radius: 99px; background: linear-gradient(90deg, var(--sun), var(--sun-hi)); transition: width .3s; }
+  .money .sum { display: flex; justify-content: space-between; gap: 10px; font-weight: 700; color: var(--muted); font-size: .9rem; margin-top: 6px; }
   .card .tag { position: absolute; top: 8px; left: 8px; background: var(--sun); color: #2a2208;
                font-size: .72rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
   .card .first { position: absolute; top: 8px; left: 8px; background: var(--moss); color: #fff;
@@ -113,7 +142,9 @@
     <img src="../images/logo.webp" alt="">
     <div class="tabs" role="tablist">
       <button class="on" data-tab="photos" role="tab">Le jardin</button>
+      <button data-tab="compare" role="tab">Avant / après</button>
       <button data-tab="timeline" role="tab">Notre histoire</button>
+      <button data-tab="goal" role="tab">Cagnotte</button>
     </div>
     <span class="spacer"></span>
     <span class="status" id="status"></span>
@@ -126,31 +157,52 @@
       <span class="muted">ou cliquez pour les choisir</span>
       <input type="file" id="file" accept="image/*" multiple hidden>
     </label>
+    <button class="add-pair hidden" id="add-pair">+ Ajouter une paire avant / après</button>
     <p class="hint muted" id="hint"></p>
     <div class="cards" id="cards"></div>
+    <form class="money hidden" id="money" onsubmit="return false">
+      <label>Montant collecté
+        <span class="eur"><input type="number" id="m-in" min="0" step="1" inputmode="numeric"> €</span></label>
+      <label>Objectif
+        <span class="eur"><input type="number" id="m-goal" min="0" step="1" inputmode="numeric"> €</span></label>
+      <div><div class="bar"><i id="m-bar"></i></div>
+        <div class="sum"><span id="m-pct"></span><span id="m-when"></span></div></div>
+    </form>
   </main>
 </section>
 
 <script>
-const MAX_SIDE = 2000;   // longest side in pixels after resizing
+// Each slider shows its pictures in a fixed shape (cropped to fill it): previews here use the same shape.
+// Uploads are resized to `max` on their longest side: enough for a full screen, small enough to load fast.
+const SLOTS = { photos: { ratio: 16 / 9, max: 2000 },      // garden slider; the first one is also the home page background
+                compare: { ratio: 4 / 3, max: 1400 },      // each half of a before / after pair
+                timeline: { ratio: 3 / 2, max: 1600 } };   // "Notre histoire"
 const QUALITY = 0.82;
+const SMALL = 900;       // a longest side under this looks blurry once enlarged
 
 const REPO = "dufourau/untoitpourmoi";
 // ?branch=… lets a test publish go to a throwaway branch.
 const BRANCH = new URLSearchParams(location.search).get("branch") || "main";
 const SITE_DIR = "docs";                       // GitHub Pages serves this folder
 const PATHS = { photos: `${SITE_DIR}/content/photos.json`,       // the garden slider (first = home page)
-                timeline: `${SITE_DIR}/content/timeline.json` }; // "Notre histoire", each photo with a month
+                compare: `${SITE_DIR}/content/compare.json`,     // before / after pairs, shown after the renders
+                timeline: `${SITE_DIR}/content/timeline.json`,   // "Notre histoire", each photo with a month
+                goal: `${SITE_DIR}/content/goal.json` };         // {collected, goal, updated}: the donation bar
 const KEY_PATH = `${SITE_DIR}/admin/key.json`;
 const ITERATIONS = 600000;                     // slows down password guessing on the public key file
 
 let token = sessionStorage.getItem("utpm-token") || "";
 let headSha = null;
-// [{ src, caption, w, h, date?, url?, data? }]; "data" (base64) means not uploaded yet
-const lists = { photos: [], timeline: [] };
+// photos / timeline: [{ src, caption, w, h, date? }]; compare: [{ before, after, caption, beforeLabel, afterLabel }]
+const lists = { photos: [], compare: [], timeline: [] };
+let goal = {};                 // { collected, goal, updated }
+const fresh = new Map();       // src -> base64 of a picture added here and not uploaded yet
+const previews = new Map();    // src -> local URL of that picture
+const url = src => previews.get(src) || "../" + src;
 let tab = "photos";
 const cur = () => lists[tab];
-const allPhotos = () => [...lists.photos, ...lists.timeline];
+const usedSrcs = l => [...l.photos, ...l.timeline].map(p => p.src).concat(l.compare.flatMap(p => [p.before, p.after])).filter(Boolean);
+const newCount = () => usedSrcs(lists).filter(s => fresh.has(s)).length;
 let saved = "";          // snapshot of the published state, to know if there are changes
 let busy = false;
 
@@ -182,7 +234,7 @@ async function readContent(auth = token) {
   const ref = await gh(`/git/ref/heads/${BRANCH}`, {}, auth);
   const out = { headSha: ref.object.sha };
   for (const [k, path] of Object.entries(PATHS)) {
-    out[k] = [];
+    out[k] = k === "goal" ? {} : [];
     try {
       const file = await gh(`/contents/${path}?ref=${ref.object.sha}`, {}, auth);
       out[k] = JSON.parse(new TextDecoder().decode(unb64(file.content)));
@@ -280,7 +332,8 @@ async function load() {
     const data = await readContent();
     sessionStorage.setItem("utpm-token", token);
     headSha = data.headSha;
-    for (const k in lists) lists[k] = data[k].map(p => ({ ...p, url: "../" + p.src }));
+    for (const k in lists) lists[k] = data[k].map(p => ({ ...p }));
+    goal = { ...data.goal };
     saved = snapshot();
     $("login").classList.add("hidden");
     $("editor").classList.remove("hidden");
@@ -295,10 +348,18 @@ async function load() {
 if (token) load();
 
 // ---------- editor ----------
-const snapshot = () => JSON.stringify(Object.values(lists).map(l => l.map(p => [p.src, p.caption || "", p.date || ""])));
+const snapshot = () => JSON.stringify([
+  lists.photos.map(p => [p.src, p.caption || ""]),
+  lists.compare.map(p => [p.before || "", p.after || "", p.caption || "", p.beforeLabel || "", p.afterLabel || ""]),
+  lists.timeline.map(p => [p.src, p.caption || "", p.date || ""]),
+  [+goal.collected || 0, +goal.goal || 0]]);
 const HINTS = {
   photos: "Les images du futur jardin. Faites glisser les vignettes pour changer l'ordre : la première sert de fond à la page d'accueil.",
+  compare: "Chaque paire montre le lieu aujourd'hui (photo), puis demain (image du projet) qui glisse par-dessus : prenez les deux du même point de vue. " +
+           "Cliquez sur une moitié ou déposez-y une image ; les mots « avant » et « après » sont facultatifs. Faites glisser les paires pour changer l'ordre.",
   timeline: "Les photos de « Notre histoire ». Indiquez le mois de chaque photo : le site les range par date. Sans date, la photo va dans « Aujourd'hui ».",
+  goal: "La barre de la cagnotte, en haut de la page et près du bouton de don. Recopiez le total affiché dans votre espace HelloAsso " +
+        "(tableau de bord de la campagne) ; la date du jour s'affiche sous la barre. Mettez 0 pour cacher la barre.",
 };
 document.querySelector(".tabs").addEventListener("click", e => {
   const b = e.target.closest("[data-tab]");
@@ -313,17 +374,42 @@ const dirty = () => snapshot() !== saved;
 function render() {
   const cards = $("cards"), list = cur();
   $("hint").innerHTML = HINTS[tab] + " Rien n'est en ligne avant d'avoir cliqué sur <b>Publier</b>.";
+  $("drop").classList.toggle("hidden", tab === "compare" || tab === "goal");
+  $("add-pair").classList.toggle("hidden", tab !== "compare");
+  $("money").classList.toggle("hidden", tab !== "goal");
+  cards.classList.toggle("hidden", tab === "goal");
+  cards.classList.toggle("pairs", tab === "compare");
+  if (tab === "goal") { renderMoney(); return updateStatus(); }
+  const pic = (src, ratio) => `<img src="${esc(url(src))}" alt="" data-r="${ratio}" onload="sizeCheck(this)">`;
   if (!list.length) {
-    cards.innerHTML = `<p class="empty muted">Aucune photo pour l'instant.</p>`;
-  } else {
+    cards.innerHTML = `<p class="empty muted">${tab === "compare" ? "Aucune paire pour l'instant." : "Aucune photo pour l'instant."}</p>`;
+  } else if (tab === "compare") {
+    const half = (p, i, side, label, empty) => `
+      <label class="half" data-i="${i}" data-side="${side}">
+        ${p[side] ? pic(p[side], SLOTS.compare.ratio) + `<span class="swap">changer</span>` : `<span>+ ${empty}</span>`}
+        <span class="lbl">${label}</span>
+        <input type="file" accept="image/*" hidden data-i="${i}" data-side="${side}">
+      </label>`;
     cards.innerHTML = list.map((p, i) => `
-      <div class="card ${p.data ? "new" : ""}" draggable="true" data-i="${i}">
-        <div class="img" style="background-image:url('${esc(p.url)}')"></div>
-        ${p.data ? `<span class="tag">nouvelle</span>` : i === 0 && tab === "photos" ? `<span class="first">accueil</span>` : ""}
+      <div class="card ${fresh.has(p.before) || fresh.has(p.after) ? "new" : ""}" draggable="true" data-i="${i}">
+        <div class="halves">${half(p, i, "before", "Aujourd'hui", "photo d'aujourd'hui")}${half(p, i, "after", "Demain", "image du projet")}</div>
+        <div class="row"><input value="${esc(p.caption)}" placeholder="Titre (ex. : Le mur d'eau et les lavandes)" data-i="${i}" data-f="caption">
+          <button class="icon del" title="Supprimer la paire" data-del="${i}">✕</button></div>
+        <div class="row"><input value="${esc(p.beforeLabel)}" placeholder="Avant (facultatif)" data-i="${i}" data-f="beforeLabel">
+          <input value="${esc(p.afterLabel)}" placeholder="Après (facultatif)" data-i="${i}" data-f="afterLabel"></div>
+        ${p.before && p.after ? "" : `<div class="row muted small">Incomplète : pas affichée sur le site.</div>`}
+      </div>`).join("");
+  } else {
+    const r = SLOTS[tab].ratio;
+    cards.innerHTML = list.map((p, i) => `
+      <div class="card ${fresh.has(p.src) ? "new" : ""}" draggable="true" data-i="${i}">
+        <div class="img" style="aspect-ratio:${r}">${pic(p.src, r)}</div>
+        ${fresh.has(p.src) ? `<span class="tag">nouvelle</span>` : i === 0 && tab === "photos" ? `<span class="first">accueil</span>` : ""}
         ${tab === "timeline" ? `<div class="row"><label>Mois</label>
           <input type="month" value="${esc(p.date)}" data-date="${i}" placeholder="MM/AAAA" title="Laisser vide pour « Aujourd'hui »"></div>` : ""}
         <div class="row">
-          <input value="${esc(p.caption)}" placeholder="Légende (facultatif)" data-i="${i}">
+          <input value="${esc(p.caption)}" placeholder="Légende (facultatif)" data-i="${i}" data-f="caption">
+          <label class="icon" title="Remplacer la photo (garde la légende et la place)">↻<input type="file" accept="image/*" hidden data-replace="${i}"></label>
           <button class="icon del" title="Supprimer" data-del="${i}">✕</button>
         </div>
       </div>`).join("");
@@ -331,19 +417,57 @@ function render() {
   updateStatus();
 }
 
+// Warn on the preview when a picture will look poor in its slot.
+function sizeCheck(img) {
+  const w = img.naturalWidth, h = img.naturalHeight, r = +img.dataset.r;
+  const msg = Math.max(w, h) < SMALL ? "Petite image : risque d'être floue"
+            : w / h < r * .7 ? "Photo verticale : le haut et le bas seront coupés" : "";
+  if (msg) img.insertAdjacentHTML("afterend", `<span class="warn">${msg}</span>`);
+}
+
+function renderMoney() {
+  $("m-in").value = goal.collected ?? "";
+  $("m-goal").value = goal.goal ?? "";
+  moneyBar();
+}
+function moneyBar() {
+  const c = +goal.collected || 0, g = +goal.goal || 0, pct = g ? Math.min(100, 100 * c / g) : 0;
+  $("m-bar").style.width = pct + "%";
+  $("m-pct").textContent = g && c ? `${Math.round(pct)} % de l'objectif` : "Barre cachée sur le site (il faut les deux montants)";
+  $("m-when").textContent = goal.updated ? "mis à jour le " + new Date(goal.updated).toLocaleDateString("fr-FR") : "";
+}
+["m-in", "m-goal"].forEach(id => $(id).addEventListener("input", () => {
+  const v = $(id).value === "" ? 0 : Math.max(0, Math.round(+$(id).value));
+  goal[id === "m-in" ? "collected" : "goal"] = v;
+  moneyBar(); updateStatus();
+}));
+$("add-pair").addEventListener("click", () => { lists.compare.push({ before: "", after: "", caption: "", beforeLabel: "", afterLabel: "" }); render(); });
+
 function updateStatus(text, cls = "") {
-  const n = allPhotos().filter(p => p.data).length;
+  const n = newCount();
   $("publish").disabled = busy || !dirty();
   $("status").className = "status " + cls;
   $("status").textContent = text ?? (dirty()
     ? `Modifications non publiées${n ? ` (${n} nouvelle${n > 1 ? "s" : ""} photo${n > 1 ? "s" : ""})` : ""}`
-    : `${cur().length} photo${cur().length > 1 ? "s" : ""} en ligne`);
+    : tab === "goal" ? "Cagnotte à jour"
+    : `${cur().length} ${tab === "compare" ? "paire" : "photo"}${cur().length > 1 ? "s" : ""} en ligne`);
 }
 
 $("cards").addEventListener("input", e => {
-  if (e.target.matches("input[data-i]")) { cur()[+e.target.dataset.i].caption = e.target.value; updateStatus(); }
+  if (e.target.matches("input[data-f]")) { cur()[+e.target.dataset.i][e.target.dataset.f] = e.target.value; updateStatus(); }
 });
-$("cards").addEventListener("change", e => {
+$("cards").addEventListener("change", async e => {
+  if (e.target.type === "file") {                  // replace a photo, or fill one half of a pair
+    const f = e.target.files[0], el = e.target;
+    if (!f) return;
+    try {
+      const p = await prepare(f);
+      if (el.dataset.side) lists.compare[+el.dataset.i][el.dataset.side] = p.src;
+      else Object.assign(cur()[+el.dataset.replace], { src: p.src, w: p.w, h: p.h });
+      render();
+    } catch { updateStatus("Fichier illisible (format non pris en charge ?)", "bad"); }
+    return;
+  }
   if (!e.target.matches("input[data-date]")) return;
   // Browsers without a month picker show a text box: accept "2013-04", "04/2013" or "4.2013".
   const v = e.target.value.trim(), m = v.match(/^(\d{1,2})[\/.\-](\d{4})$/);
@@ -357,7 +481,8 @@ $("cards").addEventListener("click", e => {
   const b = e.target.closest("[data-del]");
   if (!b) return;
   const p = cur()[+b.dataset.del];
-  if (!p.data && !confirm("Retirer cette photo du site ?")) return;
+  const isNew = tab === "compare" ? [p.before, p.after].every(s => !s || fresh.has(s)) : fresh.has(p.src);
+  if (!isNew && !confirm(tab === "compare" ? "Retirer cette paire du site ?" : "Retirer cette photo du site ?")) return;
   cur().splice(+b.dataset.del, 1);
   render();
 });
@@ -372,12 +497,22 @@ $("cards").addEventListener("dragstart", e => {
   e.dataTransfer.effectAllowed = "move";
 });
 $("cards").addEventListener("dragover", e => {
+  const half = e.target.closest(".half");
+  document.querySelectorAll(".half.over").forEach(h => h !== half && h.classList.remove("over"));
+  if (dragFrom === null && half) { e.preventDefault(); half.classList.add("over"); return; }   // a file onto one half of a pair
   if (dragFrom === null) return;
   e.preventDefault();
   document.querySelectorAll(".card.target").forEach(c => c.classList.remove("target"));
   e.target.closest(".card")?.classList.add("target");
 });
-$("cards").addEventListener("drop", e => {
+$("cards").addEventListener("drop", async e => {
+  const half = e.target.closest(".half");
+  if (dragFrom === null && half && e.dataTransfer.files[0]) {
+    e.preventDefault();
+    try { lists.compare[+half.dataset.i][half.dataset.side] = (await prepare(e.dataTransfer.files[0])).src; render(); }
+    catch { updateStatus("Fichier illisible (format non pris en charge ?)", "bad"); }
+    return;
+  }
   if (dragFrom === null) return;
   e.preventDefault();
   const c = e.target.closest(".card");
@@ -410,7 +545,8 @@ async function addFiles(files) {
   for (const [n, f] of list.entries()) {
     updateStatus(`Préparation ${n + 1} / ${list.length}…`);
     try {
-      const p = await shrink(f);
+      const p = await prepare(f);
+      p.caption = "";
       if (tab === "timeline") p.date = new Date(f.lastModified || Date.now()).toISOString().slice(0, 7);   // a first guess
       cur().push(p);
     } catch { failed++; }
@@ -421,9 +557,11 @@ async function addFiles(files) {
 }
 
 // Resize in the browser so uploads stay small and the site stays fast.
-async function shrink(file) {
+// Returns { src, w, h } and keeps the file until Publier.
+async function prepare(file) {
+  if (!file.type.startsWith("image/")) throw new Error("not an image");
   const bmp = await createImageBitmap(file, { imageOrientation: "from-image" });
-  const k = Math.min(1, MAX_SIDE / Math.max(bmp.width, bmp.height));
+  const k = Math.min(1, SLOTS[tab].max / Math.max(bmp.width, bmp.height));
   const w = Math.round(bmp.width * k), h = Math.round(bmp.height * k);
   const canvas = Object.assign(document.createElement("canvas"), { width: w, height: h });
   canvas.getContext("2d").drawImage(bmp, 0, 0, w, h);
@@ -439,7 +577,10 @@ async function shrink(file) {
     fr.readAsDataURL(blob);
   });
   const id = new Date().toISOString().slice(0, 10) + "-" + crypto.randomUUID().slice(0, 8);
-  return { src: `images/${id}.${ext}`, caption: "", w, h, data, url: URL.createObjectURL(blob) };
+  const src = `images/${id}.${ext}`;
+  fresh.set(src, data);
+  previews.set(src, URL.createObjectURL(blob));
+  return { src, w, h };
 }
 
 // ---------- publishing ----------
@@ -447,30 +588,39 @@ $("publish").addEventListener("click", async () => {
   busy = true;
   $("publish").disabled = true;
   try {
-    const fresh = allPhotos().filter(p => p.data);
-    for (const [n, p] of fresh.entries()) {
-      updateStatus(`Envoi des photos ${n + 1} / ${fresh.length}…`);
-      p.blob = (await gh("/git/blobs", { method: "POST",
-        body: JSON.stringify({ content: p.data, encoding: "base64" }) })).sha;
+    const kept = new Set(usedSrcs(lists));
+    const up = [...kept].filter(src => fresh.has(src));
+    const blobs = {};
+    for (const [n, src] of up.entries()) {
+      updateStatus(`Envoi des photos ${n + 1} / ${up.length}…`);
+      blobs[src] = (await gh("/git/blobs", { method: "POST",
+        body: JSON.stringify({ content: fresh.get(src), encoding: "base64" }) })).sha;
     }
     updateStatus("Publication…");
     lists.timeline.sort(byDate);
-    const out = {
-      photos: lists.photos.map(p => ({ src: p.src, caption: (p.caption || "").slice(0, 200), w: p.w, h: p.h })),
-      timeline: lists.timeline.map(p => ({ src: p.src, caption: (p.caption || "").slice(0, 200), w: p.w, h: p.h, date: p.date || "" })),
-    };
-    const kept = new Set([...out.photos, ...out.timeline].map(p => p.src));
+    const cap = s => (s || "").slice(0, 200);
     const current = await readContent();
-    const gone = [...current.photos, ...current.timeline].filter(p => !kept.has(p.src));
+    const moneyChanged = +goal.collected !== +current.goal.collected || +goal.goal !== +current.goal.goal;
+    const out = {
+      photos: lists.photos.map(p => ({ src: p.src, caption: cap(p.caption), w: p.w, h: p.h })),
+      compare: lists.compare.map(p => ({ before: p.before || "", after: p.after || "", caption: cap(p.caption),
+                                         beforeLabel: cap(p.beforeLabel), afterLabel: cap(p.afterLabel) })),
+      timeline: lists.timeline.map(p => ({ src: p.src, caption: cap(p.caption), w: p.w, h: p.h, date: p.date || "" })),
+      goal: { collected: +goal.collected || 0, goal: +goal.goal || 0,
+              updated: moneyChanged ? new Date().toISOString().slice(0, 10) : goal.updated || "" },
+    };
+    const gone = [...new Set(usedSrcs(current))].filter(src => !kept.has(src));
     const entries = [
-      ...fresh.map(p => ({ path: `${SITE_DIR}/${p.src}`, sha: p.blob })),
-      ...gone.map(p => ({ path: `${SITE_DIR}/${p.src}`, sha: null })),
+      ...up.map(src => ({ path: `${SITE_DIR}/${src}`, sha: blobs[src] })),
+      ...gone.map(src => ({ path: `${SITE_DIR}/${src}`, sha: null })),
       ...Object.keys(PATHS).map(k => ({ path: PATHS[k], content: JSON.stringify(out[k], null, 2) + "\n" })),
     ];
     // Parent is the commit the page loaded; if someone published since, the ref update fails.
-    headSha = await commit(headSha, entries, `Site : ${out.photos.length} images du jardin, ${out.timeline.length} photos d'histoire` +
-      (fresh.length ? `, ${fresh.length} ajoutée(s)` : "") + (gone.length ? `, ${gone.length} supprimée(s)` : ""));
-    allPhotos().forEach(p => { delete p.data; delete p.blob; });
+    headSha = await commit(headSha, entries, `Site : ${out.photos.length} images du jardin, ${out.compare.length} paires, ` +
+      `${out.timeline.length} photos d'histoire, cagnotte ${out.goal.collected} / ${out.goal.goal} €` +
+      (up.length ? `, ${up.length} photo(s) ajoutée(s)` : "") + (gone.length ? `, ${gone.length} supprimée(s)` : ""));
+    goal = { ...out.goal };
+    fresh.clear();
     saved = snapshot();
     busy = false;
     render();

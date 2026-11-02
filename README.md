@@ -13,7 +13,7 @@ A dark, cinematic photo gallery (slider and grid views) that links to the associ
   - `timeline.json`: `{src, caption, w, h, date}`, where `date` is `YYYY-MM` or empty for "Aujourd'hui". The site groups photos by month, in date order.
   - `compare.json`: `[{before, after, caption, beforeLabel, afterLabel}]`, where `before` is a photo of a spot today and `after` the render of the same spot, both cropped to 4:3 around the same view. Each pair is a side-by-side slide at the end of the garden slider; when it comes into view, the render sweeps over today's photo on the right.
 - The timeline picture is drawn with WebGL as a "3D photo": each photo has a depth map in `docs/images/depth/` (same file name), made with the Depth Anything V2 small model (ONNX). The camera drifts with parallax, and the next photo grows from the nearest objects to the background. A photo added from the admin page has no depth map yet, so it moves flat; without WebGL, or with reduced motion, plain cross-fades are used.
-- The admin page edits `photos.json` (tab "Le jardin") and `timeline.json` (tab "Notre histoire"). `compare.json` is edited by hand for now.
+- The admin page edits `photos.json` (tab "Le jardin"), `compare.json` (tab "Avant / après": two pictures per pair), `timeline.json` (tab "Notre histoire") and `goal.json` (tab "Cagnotte": amount collected and goal, typed in by hand from HelloAsso). Uploads are resized in the browser (garden 2000 px, pairs 1400 px, story 1600 px on the longest side); previews have each slider's shape (16:9, 4:3, 3:2), and a red note flags a small (blurry) or upright (cropped) picture. ↻ replaces a picture and keeps its caption and place.
 - `docs/admin/index.html` is the admin page. On login, the password decrypts a GitHub access key stored in `docs/admin/key.json` (AES-GCM, PBKDF2 with 600,000 iterations). The browser then talks to GitHub directly: each **Publier** is one commit, and GitHub Pages redeploys in 1–2 min.
 - Photos are resized in the browser to 2000 px WebP (about 50–400 KB) before upload.
 
@@ -35,7 +35,7 @@ When the key expires, publishing fails with "Clé GitHub refusée". Make a new k
 ## For the person adding photos
 1. Open **https://dufourau.github.io/untoitpourmoi/admin/**.
 2. Type the password.
-3. Choose the tab: **Le jardin** (images of the future garden) or **Notre histoire** (dated photos of the construction and of today).
+3. Choose the tab: **Le jardin** (images of the future garden), **Avant / après** (pairs: today's photo and the project image, from the same spot), **Notre histoire** (dated photos of the construction and of today) or **Cagnotte** (the amount collected, copied from HelloAsso).
 4. Drag photos into the box, or click it to choose them. Add a caption if you want one. In **Le jardin**, drag the thumbnails to change the order; the first one is the background of the home page. In **Notre histoire**, set the month of each photo, or leave it empty for "Aujourd'hui". Use ✕ to remove a photo.
 5. Click **Publier**. The site updates within 1–2 minutes.
 
