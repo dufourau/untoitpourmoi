@@ -6,9 +6,9 @@
     "h": 736
   },
   {
-    "src": "images/jardin-02.webp",
-    "caption": "Le cercle de rencontre et le coin pique-nique",
-    "w": 1365,
+    "src": "images/jardin-06.webp",
+    "caption": "L'allée accessible sous l'arche",
+    "w": 1397,
     "h": 768
   },
   {
@@ -18,33 +18,27 @@
     "h": 736
   },
   {
-    "src": "images/jardin-04.webp",
-    "caption": "L'allée fleurie",
-    "w": 1411,
-    "h": 736
-  },
-  {
-    "src": "images/jardin-05.webp",
-    "caption": "Le mur végétal et la pelouse",
-    "w": 1399,
-    "h": 768
-  },
-  {
-    "src": "images/jardin-06.webp",
-    "caption": "L'allée accessible sous l'arche",
-    "w": 1397,
-    "h": 768
-  },
-  {
     "src": "images/jardin-07.webp",
     "caption": "Les massifs vus d'en haut",
     "w": 1399,
     "h": 768
   },
   {
+    "src": "images/jardin-04.webp",
+    "caption": "L'allée fleurie",
+    "w": 1411,
+    "h": 736
+  },
+  {
     "src": "images/jardin-08.webp",
     "caption": "L'allée sensorielle et ses miroirs",
     "w": 1398,
+    "h": 768
+  },
+  {
+    "src": "images/jardin-05.webp",
+    "caption": "Le mur végétal et la pelouse",
+    "w": 1399,
     "h": 768
   },
   {
@@ -57,6 +51,12 @@
     "src": "images/jardin-10.webp",
     "caption": "Le jardin le long des bâtiments",
     "w": 1398,
+    "h": 768
+  },
+  {
+    "src": "images/jardin-02.webp",
+    "caption": "Le cercle de rencontre et le coin pique-nique",
+    "w": 1365,
     "h": 768
   }
 ]
