@@ -28,36 +28,8 @@
     "date": "2013-02"
   },
   {
-    "src": "images/histoire-2013-04-05.webp",
-    "caption": "Les premiers murs sortent de terre",
-    "w": 1600,
-    "h": 1200,
-    "date": "2013-04"
-  },
-  {
-    "src": "images/histoire-2013-04-06.webp",
-    "caption": "Les fondations de la maison",
-    "w": 1600,
-    "h": 1200,
-    "date": "2013-04"
-  },
-  {
-    "src": "images/histoire-2013-04-07.webp",
-    "caption": "Le chantier, le jour de la première pierre",
-    "w": 1600,
-    "h": 1200,
-    "date": "2013-04"
-  },
-  {
-    "src": "images/histoire-2013-04-08.webp",
-    "caption": "Les fondations des pièces arrondies",
-    "w": 1600,
-    "h": 1200,
-    "date": "2013-04"
-  },
-  {
-    "src": "images/histoire-2013-04-09.webp",
-    "caption": "Vue d'ensemble des fondations",
+    "src": "images/histoire-2013-04-11.webp",
+    "caption": "La pose de la première pierre, le 12 avril 2013",
     "w": 1600,
     "h": 1200,
     "date": "2013-04"
@@ -70,8 +42,15 @@
     "date": "2013-04"
   },
   {
-    "src": "images/histoire-2013-04-11.webp",
-    "caption": "La pose de la première pierre, le 12 avril 2013",
+    "src": "images/histoire-2013-04-09.webp",
+    "caption": "Vue d'ensemble des fondations",
+    "w": 1600,
+    "h": 1200,
+    "date": "2013-04"
+  },
+  {
+    "src": "images/histoire-2013-04-06.webp",
+    "caption": "Les fondations de la maison",
     "w": 1600,
     "h": 1200,
     "date": "2013-04"
