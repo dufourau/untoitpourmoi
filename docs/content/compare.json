@@ -2,42 +2,56 @@
   {
     "before": "images/compare-01-aujourdhui.webp",
     "after": "images/compare-01-demain.webp",
-    "caption": "Le mur d'eau et les lavandes",
-    "beforeLabel": "",
-    "afterLabel": ""
-  },
-  {
-    "before": "images/compare-02-aujourdhui.webp",
-    "after": "images/compare-02-demain.webp",
-    "caption": "La pergola ombragée et instruments vibratoires",
-    "beforeLabel": "",
-    "afterLabel": ""
+    "caption": "Le mur d'eau, l'espace sérénité et les lavandes",
+    "beforeLabel": "Bosquets, fouillis végétal",
+    "afterLabel": "Espaces organisés et accessibles"
   },
   {
     "before": "images/compare-03-aujourdhui.webp",
-    "after": "images/compare-03-demain.webp",
-    "caption": "Le cœur du jardin",
-    "beforeLabel": "Espace convivial",
+    "after": "images/2026-11-19-f4d172ef.webp",
+    "caption": "Le cœur du jardin, l'espace de vie",
+    "beforeLabel": "Espace peu convivial",
     "afterLabel": "Espace central de rencontre"
   },
   {
-    "before": "images/compare-04-aujourdhui.webp",
-    "after": "images/compare-04-demain.webp",
-    "caption": "Le coin pique-nique",
-    "beforeLabel": "Espace inutilisé",
-    "afterLabel": "Amphithéâtre végétalisé"
-  },
-  {
-    "before": "images/compare-05-aujourdhui.webp",
-    "after": "images/compare-05-demain.webp",
-    "caption": "Création d'une allée vers l'espace rencontre",
-    "beforeLabel": "Aujourd'hui impraticable",
-    "afterLabel": "Cheminement carrossable vers un espace de détente"
+    "before": "images/2026-11-19-72a57082.webp",
+    "after": "images/2026-11-19-e899c388.webp",
+    "caption": "La pergola ombragée et instruments de musique vibratoire",
+    "beforeLabel": "Espace minéral",
+    "afterLabel": "Ombre, végétation, instruments vibratoires"
   },
   {
     "before": "images/compare-06-aujourdhui.webp",
     "after": "images/compare-06-demain.webp",
     "caption": "L'allée fleurie",
+    "beforeLabel": "Allée sans issue",
+    "afterLabel": "Entrée d'une allée sensorielle"
+  },
+  {
+    "before": "images/compare-05-aujourdhui.webp",
+    "after": "images/compare-05-demain.webp",
+    "caption": "Création d'une allée vers l'espace rencontre",
+    "beforeLabel": "Aujourd'hui non accessible",
+    "afterLabel": "Cheminement carrossable vers un espace de détente"
+  },
+  {
+    "before": "images/compare-04-aujourdhui.webp",
+    "after": "images/compare-04-demain.webp",
+    "caption": "L'espace rencontre, le coin pique-nique",
+    "beforeLabel": "Espace inutilisé",
+    "afterLabel": "Amphithéâtre végétalisé"
+  },
+  {
+    "before": "",
+    "after": "",
+    "caption": "",
+    "beforeLabel": "",
+    "afterLabel": ""
+  },
+  {
+    "before": "",
+    "after": "",
+    "caption": "",
     "beforeLabel": "",
     "afterLabel": ""
   }
