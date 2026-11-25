@@ -456,6 +456,34 @@
   footer a { color: #fff; font-weight: 700; }
   footer .note { margin-left: auto; color: #9fb48f; font-size: .8rem; }
 
+  /* On a computer every section fills the screen under the top bar, content centred: a menu link shows one section, nothing of the next. */
+  @media (min-width: 861px) {
+    .garden, .story, .give { min-height: calc(100svh - 72px); display: flex; flex-direction: column; justify-content: center; }
+    .garden > *, .story > *, .give > * { width: 100%; }
+    .garden, .story, .give { padding: 22px 0; }
+    .slide { flex-basis: min(72vw, 1000px, (100svh - 500px) * 16 / 9); }
+    .viewport { padding-bottom: 22px; }
+    .head { margin-bottom: 14px; }
+    .story-cap { margin: 16px 0 14px; }
+    .give h2 { font-size: clamp(1.9rem, min(4.2vw, 5.6vh), 3.2rem); }
+    .give .leaf { width: 44px; height: 44px; margin-bottom: 4px; }
+    .give p, .goal, .give .tax { margin-bottom: 20px; }
+    /* who we are: a little tighter so it fits */
+    .t-intro { font-size: 1rem; line-height: 1.6; }
+    .t-garden { font-size: .9rem; line-height: 1.55; }
+    .tile { padding: 20px 24px; }
+  }
+  @media (min-width: 861px) and (max-height: 800px) {
+    .give .leaf { display: none; }
+    .t-intro { font-size: .9rem; line-height: 1.5; }
+    .t-garden { font-size: .84rem; line-height: 1.45; }
+    .tile { padding: 14px 18px; }
+    .t-plus { padding: 10px 12px; gap: 6px; } .t-plus svg { width: 22px; height: 22px; }
+    .hook { font-size: 1.1rem; }
+    .about { padding: 10px 0; }
+    .bento, .bento .col { gap: 10px; }
+  }
+
   .reveal { opacity: 0; transform: translateY(26px); transition: opacity .9s ease, transform .9s ease; }
   .reveal.in { opacity: 1; transform: none; }
   @media (prefers-reduced-motion: reduce) {
