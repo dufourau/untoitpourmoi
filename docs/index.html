@@ -188,6 +188,7 @@
   .t-intro { font-size: 1.06rem; line-height: 1.65; display: flex; flex-direction: column; justify-content: center; }
   .t-intro h2 { font-size: clamp(1.8rem, 3.1vw, 2.6rem); margin-bottom: 12px; }
   .t-intro .eyebrow { margin-bottom: 10px; }
+  @media (min-width: 861px) { .t-intro blockquote { white-space: nowrap; font-size: clamp(1rem, 1.55vw, 1.35rem) !important; } }
   .t-intro blockquote { margin: 0 0 12px; font-family: "Fraunces", Georgia, serif; font-style: italic; color: var(--lavender);
                         font-size: clamp(1.15rem, 1.9vw, 1.45rem); line-height: 1.3; }
   .tile strong { color: var(--moss); }
@@ -248,14 +249,19 @@
                 letter-spacing: .04em; color: var(--muted); }
   .quote:nth-child(2) cite { color: var(--sage); }
   @media (max-width: 860px) { .concept .grid { grid-template-columns: minmax(0, 1fr); } }
+  @media (min-width: 861px) {
+    .concept { min-height: calc(100svh - 72px); display: flex; align-items: center; padding: 32px 0; }
+    .concept .wrap { width: 100%; }
+  }
 
   /* Section heads */
   .head { display: flex; align-items: end; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; }
   .head p { margin: 12px 0 0; color: var(--muted); max-width: 60ch; }
   .head .side-text { margin: 0; flex: 0 1 400px; font-size: .92rem; line-height: 1.55; }
-  .garden .head { flex-wrap: nowrap; align-items: flex-end; gap: 40px; }
+  .garden .head { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .garden .head .side-text { flex: none; max-width: 78ch; font-size: .98rem; }
   .garden h2 { font-size: clamp(2rem, 3.6vw, 2.8rem); }
-  @media (max-width: 900px) { .garden .head { flex-wrap: wrap; gap: 14px; } .head .side-text { flex-basis: 100%; } }
+  @media (max-width: 900px) { .head .side-text { flex-basis: 100%; } }
   .tag { display: inline-block; background: var(--lavender-soft); color: var(--lavender); font-weight: 800;
          font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; padding: 4px 12px; border-radius: 999px;
          vertical-align: middle; margin-left: 8px; letter-spacing: .08em; }
@@ -473,7 +479,7 @@
     <a href="#histoire">Notre histoire</a>
   </nav>
   <button class="menu-btn" id="menu-btn" aria-label="Menu" aria-expanded="false">☰</button>
-  <a class="btn btn-sun donate" href="#" target="_blank" rel="noopener"><svg class="heart"><use href="#i-heart"/></svg><span class="two-line">Faire un don<small>déductible de vos impôts</small></span></a>
+  <a class="btn btn-sun donate" href="#" target="_blank" rel="noopener"><span class="two-line">Faire un don<small>déductible de vos impôts</small></span><svg class="heart"><use href="#i-heart"/></svg></a>
 </header>
 
 <section class="hero">
@@ -484,7 +490,7 @@
     <p>Un jardin pensé pour les jeunes adultes polyhandicapés de la Maison d'Accueil Spécialisée (MAS) <i>Un Toit pour Moi</i>, à Marseille&nbsp;:
        sentir, toucher, écouter, profiter du soleil.</p>
     <div class="actions">
-      <a class="btn btn-sun donate" href="#" target="_blank" rel="noopener"><svg class="heart"><use href="#i-heart"/></svg><span class="two-line">Faire un don<small>déductible de vos impôts</small></span></a>
+      <a class="btn btn-sun donate" href="#" target="_blank" rel="noopener"><span class="two-line">Faire un don<small>déductible de vos impôts</small></span><svg class="heart"><use href="#i-heart"/></svg></a>
       <a class="btn btn-ghost" href="#association">Découvrir le projet</a>
     </div>
     <div class="goal mini" hidden>
@@ -531,7 +537,7 @@
       </div>
       <div class="row">
         <p class="call">Ce jardin, nous ne pourrons pas le créer seuls. Aidez-nous à le faire pousser. 🌿</p>
-        <a class="btn btn-sun donate" href="#" target="_blank" rel="noopener"><svg class="heart"><use href="#i-heart"/></svg><span class="two-line">Je soutiens le jardin<small>déductible de vos impôts</small></span></a>
+        <a class="btn btn-sun donate" href="#" target="_blank" rel="noopener"><span class="two-line">Je soutiens le jardin<small>déductible de vos impôts</small></span><svg class="heart"><use href="#i-heart"/></svg></a>
       </div>
     </div>
   </div>
@@ -617,7 +623,7 @@
          de votre don, dans la limite de 20&nbsp;% de votre revenu imposable.
          <small>Par exemple, un don de 100&nbsp;€ ne vous coûte réellement que 34&nbsp;€ après réduction d'impôt, si vous êtes imposable
          et pouvez bénéficier de cette réduction.</small></p></div>
-    <a class="btn btn-sun donate" href="#" target="_blank" rel="noopener"><svg class="heart"><use href="#i-heart"/></svg><span class="two-line">Faire un don sur HelloAsso<small>déductible de vos impôts</small></span></a>
+    <a class="btn btn-sun donate" href="#" target="_blank" rel="noopener"><span class="two-line">Faire un don sur HelloAsso<small>déductible de vos impôts</small></span><svg class="heart"><use href="#i-heart"/></svg></a>
   </div>
 </section>
 
